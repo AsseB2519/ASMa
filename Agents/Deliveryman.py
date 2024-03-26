@@ -4,7 +4,7 @@ from spade import agent
 
 # from Classes.informposition import InformPosition
 
-class TaxiAgent(agent.Agent):
+class DeliverymanAgent(agent.Agent):
 
     current_location = None
 

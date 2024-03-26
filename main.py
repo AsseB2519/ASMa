@@ -1,15 +1,15 @@
 import time
 from spade import quit_spade
 
-# from Agents.manager import ManagerAgent
-# from Agents.taxi import TaxiAgent
-# from Agents.customer import CustomerAgent
+from Agents.Client import ClientAgent
+from Agents.Deliveryman import DeliverymanAgent
+from Agents.Manager import ManagerAgent
 
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
-MAX_TAXIS = 5  # limit number of taxis
-MAX_CUSTOMERS = 100  # limit number of customers
+MAX_DELIVERYMAN = 5  # limit number of deliveryman
+MAX_CLIENTS = 100  # limit number of clients
 
 if __name__ == '__main__':
 
@@ -22,56 +22,56 @@ if __name__ == '__main__':
     res_manager.result()
 
     # Initialize list to save all active Agents in list
-    taxi_agents_list = []
-    customer_agents_list = []
+    client_list = []
+    deliveryman_list = []
 
     # wait for Manager agent to be prepared
     time.sleep(1)
 
-    # Connect Taxi Agents and start them
-    for i in range(1, MAX_TAXIS + 1):
-        taxi_jid = 'taxi{}@'.format(str(i)) + XMPP_SERVER
-        taxi_agent = TaxiAgent(taxi_jid, PASSWORD)
+    # Connect Deliveryman Agents and start them
+    for i in range(1, MAX_DELIVERYMAN + 1):
+        deliveryman_jid = 'deliveryman{}@'.format(str(i)) + XMPP_SERVER
+        deliveryman_agent = DeliverymanAgent(deliveryman_jid, PASSWORD)
 
-        # store manager_jid in the Taxi Agent knowledge base
-        taxi_agent.set('service_contact', manager_jid)
+        # store manager_jid in the Deliveryman Agent knowledge base
+        deliveryman_agent.set('service_contact', manager_jid)
 
-        res_taxi = taxi_agent.start(auto_register=True)
-        #res_taxi.result()
-        taxi_agents_list.append(taxi_agent)
+        res_deliveryman = deliveryman_agent.start(auto_register=True)
+        res_deliveryman.result()
+        deliveryman_list.append(deliveryman_agent)
 
     # wait for Taxi agents to be prepared
     time.sleep(1)
 
-    # Connect Customer Agents and start them
-    for i in range(1, MAX_CUSTOMERS + 1):
+    # Connect Client Agents and start them
+    for i in range(1, MAX_CLIENTS + 1):
 
-        # Sleep 1 second for each x=10 customer agents added
+        # Sleep 1 second for each x=10 Client agents added
         if i % 10 == 0:
             time.sleep(1)
 
-        customer_jid = 'customer{}@'.format(str(i)) + XMPP_SERVER
-        customer_agent = CustomerAgent(customer_jid, PASSWORD)
+        client_jid = 'client{}@'.format(str(i)) + XMPP_SERVER
+        client_agent = ClientAgent(client_jid, PASSWORD)
 
-        # store manager_jid in the Customer Agent knowledge base
-        customer_agent.set('service_contact', manager_jid)
+        # store manager_jid in the Client Agent knowledge base
+        client_agent.set('service_contact', manager_jid)
 
-        res_agent = customer_agent.start(auto_register=True)
-        res_agent.result()
-        customer_agents_list.append(customer_agent)
+        res_client = client_agent.start(auto_register=True)
+        res_client.result()
+        client_list.append(client_agent)
 
     # Handle interruption of all agents
     while manager_agent.is_alive():
         try:
             time.sleep(1)
         except KeyboardInterrupt:
-            # stop all customer Agents
-            for customer_agent in customer_agents_list:
-                customer_agent.stop()
+            # stop all Client Agents
+            for client_agent in client_list:
+                client_agent.stop()
 
-            # stop all taxi Agents
-            for taxi_agent in taxi_agents_list:
-                taxi_agent.stop()
+            # stop all Delivery Agents
+            for deliveryman_agent in deliveryman_list:
+                deliveryman_agent.stop()
 
             # stop manager agent
             break
