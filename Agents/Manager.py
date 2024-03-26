@@ -1,4 +1,5 @@
 from spade import agent
+from Behaviours.Reply import ReplyBehav
 
 class ManagerAgent(agent.Agent):
 
@@ -6,5 +7,5 @@ class ManagerAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
-        # a = ReceiveRequestBehav()
-        # self.add_behaviour(a)
+        a = ReplyBehav()
+        self.add_behaviour(a)

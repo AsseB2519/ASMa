@@ -1,6 +1,5 @@
 from spade import agent
-# from Behaviours.send_request import SendRequest_Behav
-# from Behaviours.reply import ReplyBehav
+from Behaviours.SendRequest import SendRequest_Behav
 
 class ClientAgent(agent.Agent):
 
@@ -8,7 +7,8 @@ class ClientAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
-        # a = SendRequest_Behav()
+        self.products = ['Apple', 'Banana', 'Grapefruit', 'Orange', 'Pear', 'Melon', 'Strawberry']
+        a = SendRequest_Behav()
         # b = ReplyBehav()
-        # self.add_behaviour(a)
+        self.add_behaviour(a)
         # self.add_behaviour(b)

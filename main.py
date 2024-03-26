@@ -8,8 +8,8 @@ from Agents.Manager import ManagerAgent
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
-MAX_DELIVERYMAN = 5  # limit number of deliveryman
-MAX_CLIENTS = 100  # limit number of clients
+MAX_DELIVERYMAN = 1  # limit number of deliveryman
+MAX_CLIENTS = 1  # limit number of clients
 
 if __name__ == '__main__':
 
