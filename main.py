@@ -4,6 +4,7 @@ from spade import quit_spade
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
 from Agents.Manager import ManagerAgent
+from Agents.StockManager import StockManagerAgent
 
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
@@ -13,9 +14,17 @@ MAX_CLIENTS = 1  # limit number of clients
 
 if __name__ == '__main__':
 
+    stockmanager_jid = 'stockmanager@' + XMPP_SERVER
+    stockmanager_agent = StockManagerAgent(stockmanager_jid, PASSWORD)
+
+    # Start Stock Manager and verify if its ready
+    res_stockmanager = stockmanager_agent.start(auto_register=True)
+    res_stockmanager.result()
+
     # Create agents instances
     manager_jid = 'manager@' + XMPP_SERVER
     manager_agent = ManagerAgent(manager_jid, PASSWORD)
+    manager_agent.set('stock_contact', stockmanager_jid)
 
     # Start Manager_agent and verify if its ready
     res_manager = manager_agent.start(auto_register=True)
