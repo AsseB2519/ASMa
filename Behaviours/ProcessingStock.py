@@ -17,12 +17,12 @@ class StockProcessing_Behav(CyclicBehaviour):
                 flag = True
                 for p in products:
                     if p.name in self.agent.products:
-                        if self.agent.products[p.name] > p.number:
-                            print("Available Stock of Product" + p.name)
+                        if self.agent.products[p.name] < p.number:
+                            flag = False
                             # Continuar Compra
-                        else:
-                            print("Not available Stock of Product" + p.name)
-                            # Informar Cliente que não existe Stock
+                        # else:
+                        #     print("Not available Stock of Product" + p.name)
+                        #     # Informar Cliente que não existe Stock
                     else: 
                         print("Error Product " + p.name + " does not exists")
                         

@@ -1,5 +1,4 @@
 from Classes.Position import Position
-from Classes.Product import Product
 
 class Return:
     def __init__(self, agent_jid: str, init: Position, products: list):
@@ -31,4 +30,4 @@ class Return:
 
     def toString(self):
         product_str = ", ".join(product.toString() for product in self.products)
-        return "Return [agent=" + self.agent_jid + ", init=" + self.init.toString() + ", products=[" + product_str + "]]"
+        return "Return [agent=" + self.agent_jid + ", position=" + self.init.toString() + ", products=[" + product_str + "]]"

@@ -35,6 +35,8 @@ if __name__ == '__main__':
     manager_agent.set('stock_contact', stockmanager_jid)
     manager_agent.set('deliveryman_contact', deliverymanmanager_jid)
 
+    stockmanager_agent.set('service_contact', manager_jid)
+
     # Start Manager_agent and verify if its ready
     res_manager = manager_agent.start(auto_register=True)
     res_manager.result()
