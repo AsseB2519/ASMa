@@ -20,13 +20,13 @@ class ClientAgent(agent.Agent):
         # self.productsAvailable = []
         self.productsAvailable = ['Apple', 'Banana', 'Grapefruit', 'Orange', 'Pear', 'Melon', 'Strawberry']
 
-        self.a = RequestProducts_Behav()       
-        self.d = self.WaitingBehav()
+        a = RequestProducts_Behav()        
+        d = self.WaitingBehav()
         self.c = ReceiveProcessingMessage_Behav()
-        self.b = Purchase_Behav()
+        b = Purchase_Behav()
     
-        # self.add_behaviour(self.a)
-        # self.add_behaviour(self.c)
-        self.add_behaviour(self.d)
-        self.add_behaviour(self.b)
+        self.add_behaviour(a)
+        self.add_behaviour(self.c)
+        self.add_behaviour(d)
+        self.add_behaviour(b)
         self.add_behaviour(self.c)
