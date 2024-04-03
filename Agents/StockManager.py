@@ -1,12 +1,10 @@
-import datetime
 from spade import agent
-from Behaviours.UpdateProducts import Update_Behav
+from Behaviours.ProcessingStock import ProcessingStock_Behav
 
 class StockManagerAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
-        # print(f"PeriodicSenderAgent started at {datetime.datetime.now().time()}")
         
         self.products = {
                 'Apple': 20,
@@ -18,9 +16,5 @@ class StockManagerAgent(agent.Agent):
                 'Strawberry': 20
             }
         
-        start_at = datetime.datetime.now() + datetime.timedelta(seconds=5)
-        a = Update_Behav(period=2, start_at=start_at)
+        a = ProcessingStock_Behav()
         self.add_behaviour(a)
-
-        # a = StockProcessing_Behav()
-        # self.add_behaviour(a)
