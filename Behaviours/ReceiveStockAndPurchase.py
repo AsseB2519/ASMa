@@ -10,6 +10,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
     async def run(self):
         msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
         if msg:
+            # MUDAR POR CAUSA DA ESTRUTURA
             # Message Treatment based on different Message performatives
             performative = msg.get_metadata("performative")
             if performative == "inform":
@@ -30,9 +31,9 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 msg = Message(to=self.agent.get("service_contact"))             
                 msg.body = jsonpickle.encode(purchase)                               
-                msg.set_metadata("performative", "request")                     
+                msg.set_metadata("performative", "request")
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) -> Manager Agent {}".format(str(self.agent.get("service_contact"))))
                 await self.send(msg)
 
-            else: print("Error")
+            else: print("Error3")

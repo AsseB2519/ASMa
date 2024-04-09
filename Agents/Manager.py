@@ -5,7 +5,7 @@ class ManagerAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
-        self.productsAvailable = []
+        self.productsAvailable = {}
 
         a = Processing_Behav()
         self.add_behaviour(a)

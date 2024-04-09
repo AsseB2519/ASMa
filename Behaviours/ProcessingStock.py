@@ -9,15 +9,21 @@ class ProcessingStock_Behav(CyclicBehaviour):
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
             if performative == "request":
-                if msg.body == "Request Products Available":
-                    # Stock Available mandar para o Managers
+                parts = msg.body.split(":")
+                if len(parts) == 2:
+                    client = parts[0]
+                    message = parts[1].replace('"', '')  
 
-                    msg = Message(to=self.get("service_contact"))  
-                    msg.body = jsonpickle.encode(self.agent.products) # Mudar para um JSON ou Excel
-                    msg.set_metadata("performative", "inform")                    
-                    
-                    print("Agent {}:".format(str(self.agent.jid)) + " Stock Manager Agent informed Product(s) Available to Manager Agent {}".format(str(self.agent.get("service_contact"))))
-                    await self.send(msg)
+                    if message.strip() == "Request Products Available":
+                        string = str(client) + ":" + str(self.agent.products) # Classe?
+
+                        # Stock Available mandar para o Managers
+                        msg = Message(to=self.get("service_contact"))  
+                        msg.body = jsonpickle.encode(string) # Mudar para um JSON ou Excel
+                        msg.set_metadata("performative", "inform")                    
+                        
+                        print("Agent {}:".format(str(self.agent.jid)) + " Stock Manager Agent informed Product(s) Available to Manager Agent {}".format(str(self.agent.get("service_contact"))))
+                        await self.send(msg)
 
                 # stock_request = jsonpickle.decode(msg.body)
 

@@ -13,9 +13,11 @@ class Processing_Behav(CyclicBehaviour):
             performative = msg.get_metadata("performative")
             if performative == "request":
                 if msg.body == "Request Products Available":
+                    client = msg.sender
+                    string = str(client) + ":Request Products Available" 
 
-                    msg = Message(to=self.agent.get("stock_contact"))             
-                    msg.body = "Request Products Available"               
+                    msg = Message(to=self.agent.get("stock_contact"))
+                    msg.body = jsonpickle.encode(string) 
                     msg.set_metadata("performative", "request")           
             
                     print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent requesting Product(s) to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
@@ -30,7 +32,7 @@ class Processing_Behav(CyclicBehaviour):
                         msg.body = jsonpickle.encode(request)                         
                         msg.set_metadata("performative", "request")                   
             
-                        print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent requesting Product(s) to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
+                        print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
                         await self.send(msg)
 
                     elif isinstance(request, Return):
@@ -42,17 +44,26 @@ class Processing_Behav(CyclicBehaviour):
                         print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent requesting Product(s) Stock to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                         await self.send(msg)
                         
-                    else: print("Error")
+                    else: print("Error2")
 
             elif performative == "inform":
                 inform = jsonpickle.decode(msg.body)
-                self.agent.productsAvailable = inform
 
-                products = [(product, quantity) for product, quantity in self.agent.productsAvailable.items() if quantity > 0]
+                # MUDAR POR CAUSA DA ESTRUTURA
+                parts = inform.split(":", 1)
+                if len(parts) == 2:
+                    client = parts[0].replace('"', '')
+                    message = parts[1].replace('"', '')  
 
-                client = "client1@laptop-ci4qet97"
+                # self.agent.productsAvailable = inform
+                # products = [(product, quantity) for product, quantity in self.agent.productsAvailable.items() if quantity > 0]
+
+                # É PRECISO PROCESSAR A MENSAGEM
+
+                
+                # client = "client1@laptop-ci4qet97" # HardCoded
                 msg = Message(to=client)             
-                msg.body = jsonpickle.encode(products)                         
+                msg.body = jsonpickle.encode(inform)                         
                 msg.set_metadata("performative", "inform") 
 
                 # print(self.agent.productsAvailable)
