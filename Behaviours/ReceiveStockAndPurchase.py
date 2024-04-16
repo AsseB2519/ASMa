@@ -15,18 +15,28 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 #self.agent.productsAvailable = inform
 
+                # Randomly select 5 products and choose random quantity for each
+                selected_products = random.sample(inform, 5)
                 lista_compras = []
-                for produto in inform:
-                    
-                    quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
-                    if quantidade != 0 :
-                        lista_compras.append(Product(produto, quantidade))
-                        if produto in self.agent.productsBought:
-                            self.agent.productsBought[produto] += quantidade
-                        else:
-                            self.agent.productsBought[produto] = quantidade
+                for product in selected_products:
+                    selected_quantity = random.randint(1, product.get_quantity())
+                    lista_compras.append((product, selected_quantity))
 
-                # purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
+                # Print selected products and quantities saved in tuples
+                print("Selected Products with Quantity:")
+                for product, quantity in lista_compras:
+                    print(f"Product: {product.get_product_id()}, Quantity: {quantity}")
+
+                #for produto in inform: 
+                #    quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
+                #    if quantidade != 0 :
+                #        lista_compras.append(Product(produto, quantidade))
+                #        if produto in self.agent.productsBought:
+                #            self.agent.productsBought[produto] += quantidade
+                #        else:
+                #            self.agent.productsBought[produto] = quantidade
+
+                purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
                 msg = Message(to=self.agent.get("service_contact"))             
                 msg.body = jsonpickle.encode("")                               

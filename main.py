@@ -8,7 +8,7 @@ from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 
 
-XMPP_SERVER = 'laptop-ci4qet97'
+XMPP_SERVER = '172.16.252.169'
 PASSWORD = 'NOPASSWORD'
 
 MAX_DELIVERYMAN = 1  # limit number of deliveryman
