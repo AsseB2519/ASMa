@@ -19,9 +19,10 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 # Randomly select 5 products and choose random quantity for each
                 selected_products = random.sample(inform, 5)
                 lista_compras = []
-                for product in selected_products:
-                    selected_quantity = random.randint(1, product.get_quantity())
-                    lista_compras.append((product, selected_quantity))
+
+                #for product in selected_products:
+                #    selected_quantity = random.randint(1, product.get_quantity())
+                #    lista_compras.append((product, selected_quantity))
                 
                 # Parâmetro que controla o decaimento da probabilidade
                 decay_rate = 0.5
@@ -43,7 +44,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 # Print selected products and quantities saved in tuples
                 print("Selected Products with Quantity:")
                 for product, quantity in lista_compras:
-                    print(f"Product: {product.get_product_id()}, Quantity: {quantity}")
+                    print(f"Product: {product.get_name()}, Quantity: {quantity}")
 
                 #for produto in inform: 
                 #    quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
