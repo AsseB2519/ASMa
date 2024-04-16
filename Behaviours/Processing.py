@@ -64,6 +64,8 @@ class Processing_Behav(CyclicBehaviour):
 
                 client = inform.get_client_jid()
                 products = inform.get_product_managers()
+
+                # Remover o Manager guardar os Produtos
                 self.agent.productsAvailable = products
 
                 new_products = []

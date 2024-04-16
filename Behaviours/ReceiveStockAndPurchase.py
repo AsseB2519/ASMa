@@ -42,29 +42,26 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     # Choose a quantity based on the weights
                     selected_quantity = random.choices(range(1, max_quantity + 1), weights=weights)[0]
 
-                    lista_compras.append((product, selected_quantity))
-
+                    lista_compras.append((product.get_product_id(), selected_quantity))
+                
                 # Print selected products and quantities saved in tuples
-                print("Selected Products with Quantity:")
-                for product, quantity in lista_compras:
-                    print(f"Product: {product.get_name()}, Quantity: {quantity}")
+                # print("Selected Products with Quantity:")
+                # for product, quantity in lista_compras:
+                #     print(f"Product: {product}, Quantity: {quantity}")
 
-                #for produto in inform: 
-                #    quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
-                #    if quantidade != 0 :
-                #        lista_compras.append(Product(produto, quantidade))
-                #        if produto in self.agent.productsBought:
-                #            self.agent.productsBought[produto] += quantidade
-                #        else:
-                #            self.agent.productsBought[produto] = quantidade
+                for product, quantity in lista_compras:
+                    if product in self.agent.productsBought:
+                        self.agent.productsBought[product] += quantity
+                    else:
+                        self.agent.productsBought[product] = quantity
 
                 purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
                 msg = Message(to=self.agent.get("service_contact"))             
-                msg.body = jsonpickle.encode("")                               
+                msg.body = jsonpickle.encode(purchase)                               
                 msg.set_metadata("performative", "request")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) -> Manager Agent {}".format(str(self.agent.get("service_contact"))))
+                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to Manager Agent {}".format(str(self.agent.get("service_contact"))))
                 await self.send(msg)
 
             else: print("Error3")

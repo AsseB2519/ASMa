@@ -6,6 +6,7 @@ class ManagerAgent(agent.Agent):
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
         
+        # Remover o Manager guardar os Produtos
         self.productsAvailable = []
 
         a = Processing_Behav()

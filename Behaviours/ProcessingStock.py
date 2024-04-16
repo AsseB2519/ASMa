@@ -3,6 +3,7 @@ from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
 from Classes.ClientProducts import ClientProducts
+from Classes.Product_Manager import Product_Manager
 
 class ProcessingStock_Behav(CyclicBehaviour):
     async def run(self):
@@ -29,33 +30,34 @@ class ProcessingStock_Behav(CyclicBehaviour):
                         print("Agent {}:".format(str(self.agent.jid)) + " Stock Manager Agent informed Product(s) Available to Manager Agent {}".format(str(self.agent.get("service_contact"))))
                         await self.send(msg)
 
-                # stock_request = jsonpickle.decode(msg.body)
-
-                # products = stock_request.getProducts()
-                
-                # flag = True
-                # for p in products:
-                #     if p.name in self.agent.products:
-                #         if self.agent.products[p.name] < p.number:
-                #             flag = False
-                #             # Continuar Compra
-                #         # else:
-                #         #     print("Not available Stock of Product" + p.name)
-                #         #     # Informar Cliente que não existe Stock
-                #     else: 
-                #         print("Error Product " + p.name + " does not exists")
-                        
-                        
-                # # print(self.agent.products)
-
-            # self.kill()  # kill the ReplyBehav
             if performative == "inform":
-                print("A remover do meu Stock")
-                
+                request = jsonpickle.decode(msg.body)
+
+                lista_compras = request.getProducts()
+
+                # Iterating over the list of tuples (product_id, decrement)
+                for product_id, decrement in lista_compras:
+                    # Searching for the product in self.products by product_id
+                    found = False
+
+                    for product in self.agent.products:
+                        if product.get_product_id() == product_id:
+                            found = True
+                            # Checking if there's enough quantity to decrement
+                            if product.get_quantity() >= decrement:
+                                new_quantity = product.get_quantity() - decrement
+                                product.set_quantity(new_quantity)
+                                # print(f"Quantity of product {product.name} updated. New quantity: {product.quantity}")
+                            else:
+                                print("Not enough stock to decrement")
+                                # É preciso ver quando o Stock acaba
+                            break
+                    if not found:
+                        print("Product not found")
 
         else:
             print("Agent {}:".format(str(self.agent.jid)) + "Did not received any message after 10 seconds")
 
-    async def on_end(self):  # on ReplyStockBehav end, kill the respective Customer Agent
+    async def on_end(self):  
         await self.agent.stop()
 
