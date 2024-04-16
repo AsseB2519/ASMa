@@ -15,7 +15,6 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 inform = jsonpickle.decode(msg.body)
 
                 self.agent.productsAvailable = inform
-                # print(self.agent.productsAvailable)
 
                 # lista_compras = []
                 # for produto in self.agent.productsAvailable:
@@ -30,7 +29,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 # purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
                 msg = Message(to=self.agent.get("service_contact"))             
-                msg.body = jsonpickle.encode(purchase)                               
+                msg.body = jsonpickle.encode("")                               
                 msg.set_metadata("performative", "request")
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) -> Manager Agent {}".format(str(self.agent.get("service_contact"))))

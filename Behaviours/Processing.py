@@ -4,6 +4,7 @@ from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
 from Classes.Purchase import Purchase
+from Classes.Product_Manager import Product_Manager
 
 class Processing_Behav(CyclicBehaviour):
     async def run(self):
@@ -56,7 +57,27 @@ class Processing_Behav(CyclicBehaviour):
 
                 self.agent.productsAvailable = message
 
-                # NAO MANDAR QUANTIDADE DE PRODUTOS DISPONIVEIS
+                print(self.agent.productsAvailable)
+
+                # Iterar sobre cada produto na lista
+                for product in self.agent.productsAvailable:
+                    # Obter a quantidade do produto atual
+                    quantity = product.get_quantity()
+                    # Faça algo com a quantidade, por exemplo, imprimir
+                    print(f"A quantidade do produto é: {quantity}")
+
+                # Construct a list of dictionaries containing information for each available product
+                # message_body = []
+                # for product in available_products:
+                #     product_info = {
+                #         "product_id": product.get_product_id(),
+                #         "name": product.get_name(),
+                #         "category": product.get_category(),
+                #         "price": product.get_price()
+                #     }
+                #     message_body.append(product_info)
+
+                # print(message_body)
 
                 msg = Message(to=client)             
                 msg.body = jsonpickle.encode(message)                         

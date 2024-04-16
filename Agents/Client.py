@@ -11,7 +11,7 @@ class ClientAgent(agent.Agent):
         self.position = Position(random.randint(1, 100), random.randint(1, 100))
 
         self.productsBought = {}
-        self.productsAvailable = []
+        # self.productsAvailable = []
 
         a = RequestProducts_Behav() 
         self.add_behaviour(a)

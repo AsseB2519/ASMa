@@ -1,4 +1,4 @@
-class Product:
+class Product_Manager:
     def __init__(self, product_id: int, name: str, category: str, quantity: int, price: float):
         self.product_id = product_id
         self.name = name
@@ -36,5 +36,5 @@ class Product:
     def set_price(self, price: float) -> None:
         self.price = price
 
-    def __str__(self):
+    def toString(self):
         return f"Product [ID={self.product_id}, Name={self.name}, Category={self.category}, Quantity={self.quantity}, Price={self.price}]"
