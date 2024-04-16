@@ -23,22 +23,25 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 #for product in selected_products:
                 #    selected_quantity = random.randint(1, product.get_quantity())
                 #    lista_compras.append((product, selected_quantity))
-                
-                # Parâmetro que controla o decaimento da probabilidade
-                decay_rate = 0.5
 
-                # Número máximo de itens
-                max_quantity = 10
-
-                # Gerar os pesos
-                pesos = [1 / ((i+1) ** decay_rate) for i in range(max_quantity)]
-
-                # Normalizar os pesos para que a soma seja 1
-                pesos = np.array(pesos) / np.sum(pesos)
+                # Function to generate weights with exponential decay
+                def generate_weights(max_quantity):
+                    decay_factor = 0.5  # Adjust as needed
+                    weights = [np.exp(-decay_factor * i) for i in range(1, max_quantity + 1)]
+                    return weights / np.sum(weights)
 
                 for product in selected_products:
-                    # Escolhe uma quantidade baseada nos pesos
-                    selected_quantity = random.choices(range(1, product.get_quantity() + 1), weights=[1 / ((i+1) ** decay_rate) for i in range(product.get_quantity())])[0]
+                    max_quantity = product.get_quantity()
+
+                    # Generate weights based on exponential decay
+                    weights = generate_weights(max_quantity)
+
+                    # Manually increase the weight for selecting 1
+                    weights[0] *= 2
+
+                    # Choose a quantity based on the weights
+                    selected_quantity = random.choices(range(1, max_quantity + 1), weights=weights)[0]
+
                     lista_compras.append((product, selected_quantity))
 
                 # Print selected products and quantities saved in tuples
