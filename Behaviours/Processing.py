@@ -49,24 +49,18 @@ class Processing_Behav(CyclicBehaviour):
             elif performative == "inform":
                 inform = jsonpickle.decode(msg.body)
 
-                # MUDAR POR CAUSA DA ESTRUTURA
                 parts = inform.split(":", 1)
                 if len(parts) == 2:
                     client = parts[0].replace('"', '')
                     message = parts[1].replace('"', '')  
 
-                # self.agent.productsAvailable = inform
-                # products = [(product, quantity) for product, quantity in self.agent.productsAvailable.items() if quantity > 0]
+                self.agent.productsAvailable = message
 
-                # É PRECISO PROCESSAR A MENSAGEM
+                # NAO MANDAR QUANTIDADE DE PRODUTOS DISPONIVEIS
 
-                
-                # client = "client1@laptop-ci4qet97" # HardCoded
                 msg = Message(to=client)             
-                msg.body = jsonpickle.encode(inform)                         
+                msg.body = jsonpickle.encode(message)                         
                 msg.set_metadata("performative", "inform") 
-
-                # print(self.agent.productsAvailable)
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent informed Product(s) Available to Client Agent {}".format(client))
                 await self.send(msg)

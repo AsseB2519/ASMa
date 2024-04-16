@@ -15,11 +15,11 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     message = parts[1].replace('"', '')  
 
                     if message.strip() == "Request Products Available":
-                        string = str(client) + ":" + str(self.agent.products) # Classe?
+                        string = str(client) + ":" + str(self.agent.products) 
 
                         # Stock Available mandar para o Managers
                         msg = Message(to=self.get("service_contact"))  
-                        msg.body = jsonpickle.encode(string) # Mudar para um JSON ou Excel
+                        msg.body = jsonpickle.encode(string)
                         msg.set_metadata("performative", "inform")                    
                         
                         print("Agent {}:".format(str(self.agent.jid)) + " Stock Manager Agent informed Product(s) Available to Manager Agent {}".format(str(self.agent.get("service_contact"))))

@@ -1,21 +1,28 @@
+import csv
 from spade import agent
 from Behaviours.ProcessingStock import ProcessingStock_Behav
-from Classes.Product import Product
+from Classes.Product_Manager import Product
 
 class StockManagerAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
         
-        self.products = {
-            'Apple': Product('Apple', 20, 1.50),
-            'Banana': Product('Banana', 20, 0.80),
-            'Grapefruit': Product('Grapefruit', 20, 2.00),
-            'Orange': Product('Orange', 20, 1.20),
-            'Pear': Product('Pear', 20, 1.80),
-            'Melon': Product('Melon', 20, 3.50),
-            'Strawberry': Product('Strawberry', 20, 2.50)
-        }
+        # Initialize an empty dictionary to store products
+        self.products = {}
+
+        # Read the products from the CSV file
+        with open('products.csv', newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                product_id = row['ID']
+                name = row['Name']
+                category = row['Category']
+                quantity = int(row['Quantity'])
+                price = float(row['Price'])
+                
+                # Create a Product object and add it to the products dictionary
+                self.products[product_id] = Product(product_id, name, category, quantity, price)
         
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
