@@ -3,7 +3,6 @@ import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
-from Classes.Product import Product
 from Classes.Purchase import Purchase
 
 class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
@@ -14,17 +13,18 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
             if performative == "inform":
                 inform = jsonpickle.decode(msg.body)
 
-                self.agent.productsAvailable = inform
+                #self.agent.productsAvailable = inform
 
-                # lista_compras = []
-                # for produto in self.agent.productsAvailable:
-                #     quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
-                #     if quantidade != 0 :
-                #         lista_compras.append(Product(produto, quantidade))
-                #         if produto in self.agent.productsBought:
-                #             self.agent.productsBought[produto] += quantidade
-                #         else:
-                #             self.agent.productsBought[produto] = quantidade
+                lista_compras = []
+                for produto in inform:
+                    
+                    quantidade = random.choices(range(11), weights=[50, 15, 10, 8, 7, 6, 5, 4, 3, 2, 1])[0]
+                    if quantidade != 0 :
+                        lista_compras.append(Product(produto, quantidade))
+                        if produto in self.agent.productsBought:
+                            self.agent.productsBought[produto] += quantidade
+                        else:
+                            self.agent.productsBought[produto] = quantidade
 
                 # purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 

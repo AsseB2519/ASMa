@@ -28,12 +28,24 @@ class Processing_Behav(CyclicBehaviour):
                     request = jsonpickle.decode(msg.body)
                     
                     if isinstance(request, Purchase):
+                        # Fazer tratamento da infornação
+                        # Stock - ProdutosCompraods lista de tuplos (id, quantidade)
+                        # DeliveryMan - jid ou Loc ou tudo
+
                         # Mandar para StockManager
                         msg = Message(to=self.agent.get("stock_contact"))             
                         msg.body = jsonpickle.encode(request)                         
+                        msg.set_metadata("performative", "inform")                   
+            
+                        print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent informed the Product(s) purchase to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
+                        await self.send(msg)
+
+                        # Mandar para DeliverymanManager 
+                        msg = Message(to=self.agent.get("deliveryman_contact"))       
+                        msg.body = jsonpickle.encode(request)                         
                         msg.set_metadata("performative", "request")                   
             
-                        print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
+                        print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent requesting Deliveryman to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                         await self.send(msg)
 
                     elif isinstance(request, Return):
@@ -50,21 +62,18 @@ class Processing_Behav(CyclicBehaviour):
             elif performative == "inform":
                 inform = jsonpickle.decode(msg.body)
 
-                parts = inform.split(":", 1)
-                if len(parts) == 2:
-                    client = parts[0].replace('"', '')
-                    message = parts[1].replace('"', '')  
+                client = inform.get_client_jid()
+                products = inform.get_product_managers()
+                self.agent.productsAvailable = products
 
-                self.agent.productsAvailable = message
+                new_products = []
+                for p in products:
+                    quantidade = p.get_quantity()
+                    if quantidade > 0:
+                        new_products.append(p)
 
-                print(self.agent.productsAvailable)
-
-                # Iterar sobre cada produto na lista
-                for product in self.agent.productsAvailable:
-                    # Obter a quantidade do produto atual
-                    quantity = product.get_quantity()
-                    # Faça algo com a quantidade, por exemplo, imprimir
-                    print(f"A quantidade do produto é: {quantity}")
+                # for p in new_products:
+                #     print(p.toString())
 
                 # Construct a list of dictionaries containing information for each available product
                 # message_body = []
@@ -77,10 +86,8 @@ class Processing_Behav(CyclicBehaviour):
                 #     }
                 #     message_body.append(product_info)
 
-                # print(message_body)
-
                 msg = Message(to=client)             
-                msg.body = jsonpickle.encode(message)                         
+                msg.body = jsonpickle.encode(products)                         
                 msg.set_metadata("performative", "inform") 
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent informed Product(s) Available to Client Agent {}".format(client))
