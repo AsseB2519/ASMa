@@ -22,12 +22,6 @@ class Purchase:
     def setProducts(self, products: list):
         self.products = products
 
-    # def getPurchase(self):
-    #     return self.purchase
-
-    # def setPurchase(self, purchase: bool):
-    #     self.purchase = purchase
-
     def toString(self):
         product_str = ", ".join(product.toString() for product in self.products)
         return "Purchase [agent=" + self.agent_jid + ", position=" + self.init.toString() + ", products=[" + product_str + "]]"

@@ -16,7 +16,7 @@ MAX_CLIENTS = 1  # limit number of clients
 
 if __name__ == '__main__':
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
-    deliverymanmanager_agent = StockManagerAgent(deliverymanmanager_jid, PASSWORD)
+    deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)
 
     # Start Stock Manager and verify if its ready
     res_deliverymanmanager = deliverymanmanager_agent.start(auto_register=True)
@@ -36,6 +36,8 @@ if __name__ == '__main__':
     manager_agent.set('deliveryman_contact', deliverymanmanager_jid)
 
     stockmanager_agent.set('service_contact', manager_jid)
+
+    deliverymanmanager_agent.set('service_contact', manager_jid)
 
     # Start Manager_agent and verify if its ready
     res_manager = manager_agent.start(auto_register=True)

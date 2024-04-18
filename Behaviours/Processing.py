@@ -3,6 +3,7 @@ import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
+from Classes.Product import Product
 from Classes.Purchase import Purchase
 from Classes.Product_Manager import Product_Manager
 
@@ -26,27 +27,28 @@ class Processing_Behav(CyclicBehaviour):
 
                 else :
                     request = jsonpickle.decode(msg.body)
-                    
                     if isinstance(request, Purchase):
                         # Fazer tratamento da infornação
-                        # Stock - ProdutosCompraods lista de tuplos (id, quantidade)
-                        # DeliveryMan - jid ou Loc ou tudo
+                        # Stock - ProdutosComprados lista de tuplos (id, quantidade)
+                        # DeliveryMan - tudo
+                        inform = request
 
                         # Mandar para StockManager
                         msg = Message(to=self.agent.get("stock_contact"))             
-                        msg.body = jsonpickle.encode(request)                         
+                        msg.body = jsonpickle.encode(inform)                         
                         msg.set_metadata("performative", "inform")                   
             
                         print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent informed the Product(s) purchase to StockManager Agent {}".format(str(self.agent.get("stock_contact"))))
                         await self.send(msg)
 
                         # Mandar para DeliverymanManager 
-                        msg = Message(to=self.agent.get("deliveryman_contact"))       
-                        msg.body = jsonpickle.encode(request)                         
-                        msg.set_metadata("performative", "request")                   
+                        msg2 = Message(to=self.agent.get("deliveryman_contact"))  
+                        print(self.agent.get('deliveryman_contact'))     
+                        msg2.body = jsonpickle.encode(request)                         
+                        msg2.set_metadata("performative", "request")                   
             
                         print("Agent {}:".format(str(self.agent.jid)) + " Manager Agent requesting Deliveryman to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
-                        await self.send(msg)
+                        await self.send(msg2)
 
                     elif isinstance(request, Return):
                         # Mandar para DeliverymanManager IGNORAR POR AGORA
@@ -65,8 +67,7 @@ class Processing_Behav(CyclicBehaviour):
                 client = inform.get_client_jid()
                 products = inform.get_product_managers()
 
-                # Remover o Manager guardar os Produtos
-                self.agent.productsAvailable = products
+                # self.agent.productsAvailable = products
 
                 new_products = []
                 for p in products:
@@ -75,18 +76,16 @@ class Processing_Behav(CyclicBehaviour):
                         new_products.append(p)
 
                 # for p in new_products:
-                #     print(p.toString())
+                #     print(p)                        
 
                 # Construct a list of dictionaries containing information for each available product
-                # message_body = []
-                # for product in available_products:
-                #     product_info = {
-                #         "product_id": product.get_product_id(),
-                #         "name": product.get_name(),
-                #         "category": product.get_category(),
-                #         "price": product.get_price()
-                #     }
-                #     message_body.append(product_info)
+                message_body = []
+                for product in new_products:
+                    produto = Product(product.get_product_id(), product.get_name(), product.get_category(), product.get_price())
+                    message_body.append(produto)
+
+                # for p in message_body:
+                    # print(p)
 
                 msg = Message(to=client)             
                 msg.body = jsonpickle.encode(products)                         

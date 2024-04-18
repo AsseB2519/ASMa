@@ -8,22 +8,6 @@ class StockManagerAgent(agent.Agent):
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
         
-        # # Initialize an empty dictionary to store products
-        # self.products = {}
-
-        # # Read the products from the CSV file
-        # with open('products.csv', newline='') as csvfile:
-        #     reader = csv.DictReader(csvfile)
-        #     for row in reader:
-        #         product_id = row['ID']
-        #         name = row['Name']
-        #         category = row['Category']
-        #         quantity = int(row['Quantity'])
-        #         price = float(row['Price'])
-                
-        #         # Create a Product object and add it to the products dictionary
-        #         self.products[product_id] = Product(product_id, name, category, quantity, price)
-        
         # Initialize an empty list to store products
         self.products = []
 
@@ -36,9 +20,10 @@ class StockManagerAgent(agent.Agent):
                 category = row['Category']
                 quantity = int(row['Quantity'])
                 price = float(row['Price'])
+                weight = float(row['Weight'])
                 
                 # Create a Product object and append it to the products list
-                self.products.append(Product_Manager(product_id, name, category, quantity, price))
+                self.products.append(Product_Manager(product_id, name, category, quantity, price, weight))
 
         a = ProcessingStock_Behav()
         self.add_behaviour(a)

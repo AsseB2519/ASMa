@@ -47,10 +47,11 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             if product.get_quantity() >= decrement:
                                 new_quantity = product.get_quantity() - decrement
                                 product.set_quantity(new_quantity)
-                                # print(f"Quantity of product {product.name} updated. New quantity: {product.quantity}")
+                                print(f"Quantity of product {product.name} updated. New quantity: {product.quantity}")
                             else:
                                 print("Not enough stock to decrement")
                                 # É preciso ver quando o Stock acaba
+                                # Negociação aqui
                             break
                     if not found:
                         print("Product not found")
