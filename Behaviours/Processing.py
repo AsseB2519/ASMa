@@ -43,7 +43,6 @@ class Processing_Behav(CyclicBehaviour):
 
                         # Mandar para DeliverymanManager 
                         msg2 = Message(to=self.agent.get("deliveryman_contact"))  
-                        print(self.agent.get('deliveryman_contact'))     
                         msg2.body = jsonpickle.encode(request)                         
                         msg2.set_metadata("performative", "request")                   
             

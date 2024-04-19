@@ -18,12 +18,14 @@ if __name__ == '__main__':
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)
 
-    # Start Stock Manager and verify if its ready
+    # Start Deliveryman Manager and verify if its ready
     res_deliverymanmanager = deliverymanmanager_agent.start(auto_register=True)
     res_deliverymanmanager.result()
 
     stockmanager_jid = 'stockmanager@' + XMPP_SERVER
     stockmanager_agent = StockManagerAgent(stockmanager_jid, PASSWORD)
+
+    stockmanager_agent.set('deliveryman_contact', deliverymanmanager_jid)
 
     # Start Stock Manager and verify if its ready
     res_stockmanager = stockmanager_agent.start(auto_register=True)

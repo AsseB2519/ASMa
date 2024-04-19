@@ -8,8 +8,9 @@ class DeliverymanManagerAgent(agent.Agent):
         print("Agent {}".format(str(self.jid)) + " starting...")
 
         # products_to_be_delivered = {}
+        # products_delivered = {}
 
-        # products_delivered = {}^
+        self.products = []
 
         a = ProcessingDelivery_Behav()
         self.add_behaviour(a)

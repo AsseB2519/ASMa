@@ -14,11 +14,17 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
             if performative == "request":
                 request = jsonpickle.decode(msg.body)
 
-                print(request)
+                # JID LOC e PRODUCTS
                 
                 if isinstance(request, Purchase):
                     products = request.getProducts()
+                    
                     for p in products:
-                        print(p)
+                        
+                
+            elif performative == "inform":
+                inform = jsonpickle.decode(msg.body)
+
+                self.agent.products = inform
 
 

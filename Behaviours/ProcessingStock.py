@@ -35,6 +35,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
 
                 lista_compras = request.getProducts()
 
+                # for p in lista_compras:
+                    # print(p)
+
                 # Iterating over the list of tuples (product_id, decrement)
                 for product_id, decrement in lista_compras:
                     # Searching for the product in self.products by product_id
@@ -47,7 +50,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             if product.get_quantity() >= decrement:
                                 new_quantity = product.get_quantity() - decrement
                                 product.set_quantity(new_quantity)
-                                print(f"Quantity of product {product.name} updated. New quantity: {product.quantity}")
+                                # print(f"Quantity of product {product.name} updated. New quantity: {product.quantity}")
                             else:
                                 print("Not enough stock to decrement")
                                 # É preciso ver quando o Stock acaba

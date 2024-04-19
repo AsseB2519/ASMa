@@ -14,40 +14,34 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
             if performative == "inform":
                 inform = jsonpickle.decode(msg.body)
 
-                #self.agent.productsAvailable = inform
+                length = len(inform)
 
-                # Randomly select 5 products and choose random quantity for each
-                selected_products = random.sample(inform, 5)
+                # Função para gerar pesos com decaimento exponencial para decidir quantos produtos selecionar
+                def generate_count_weights(n):
+                    decay_factor = 0.5  # Ajuste para controlar a rapidez do decaimento
+                    weights = [np.exp(-decay_factor * i) for i in range(n)]
+                    return weights / np.sum(weights)
+
+                # Decidindo quantos produtos selecionar
+                count_weights = generate_count_weights(length)
+                number_of_products_to_select = random.choices(range(1, length + 1), weights=count_weights, k=1)[0]
+
+                # Selecionando produtos aleatoriamente
+                selected_products = random.sample(inform, k=number_of_products_to_select)
+
                 lista_compras = []
 
-                #for product in selected_products:
-                #    selected_quantity = random.randint(1, product.get_quantity())
-                #    lista_compras.append((product, selected_quantity))
-
-                # Function to generate weights with exponential decay
-                def generate_weights(max_quantity):
-                    decay_factor = 0.5  # Adjust as needed
+                # Função para gerar pesos com decaimento exponencial para a seleção de quantidades
+                def generate_quantity_weights(max_quantity):
+                    decay_factor = 0.5  # Ajuste conforme necessário
                     weights = [np.exp(-decay_factor * i) for i in range(1, max_quantity + 1)]
                     return weights / np.sum(weights)
 
                 for product in selected_products:
                     max_quantity = product.get_quantity()
-
-                    # Generate weights based on exponential decay
-                    weights = generate_weights(max_quantity)
-
-                    # Manually increase the weight for selecting 1
-                    weights[0] *= 2
-
-                    # Choose a quantity based on the weights
-                    selected_quantity = random.choices(range(1, max_quantity + 1), weights=weights)[0]
-
+                    quantity_weights = generate_quantity_weights(max_quantity)
+                    selected_quantity = random.choices(range(1, max_quantity + 1), weights=quantity_weights)[0]
                     lista_compras.append((product.get_product_id(), selected_quantity))
-                
-                # Print selected products and quantities saved in tuples
-                # print("Selected Products with Quantity:")
-                # for product, quantity in lista_compras:
-                #     print(f"Product: {product}, Quantity: {quantity}")
 
                 for product, quantity in lista_compras:
                     if product in self.agent.productsBought:
