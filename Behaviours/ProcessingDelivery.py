@@ -19,9 +19,6 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 if isinstance(request, Purchase):
                     products = request.getProducts()
                     
-                    for p in products:
-                        
-                
             elif performative == "inform":
                 inform = jsonpickle.decode(msg.body)
 
