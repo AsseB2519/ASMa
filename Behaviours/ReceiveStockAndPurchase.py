@@ -43,6 +43,9 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     selected_quantity = random.choices(range(1, max_quantity + 1), weights=quantity_weights)[0]
                     lista_compras.append((product.get_product_id(), selected_quantity))
 
+                for p in lista_compras:
+                    print(p)
+                    
                 for product, quantity in lista_compras:
                     if product in self.agent.productsBought:
                         self.agent.productsBought[product] += quantity
@@ -51,11 +54,11 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
-                msg = Message(to=self.agent.get("service_contact"))             
+                msg = Message(to=self.agent.get("stockmanager_contact"))             
                 msg.body = jsonpickle.encode(purchase)                               
                 msg.set_metadata("performative", "request")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to Manager Agent {}".format(str(self.agent.get("service_contact"))))
+                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
                 await self.send(msg)
 
             else: print("Error3")

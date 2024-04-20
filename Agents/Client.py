@@ -2,6 +2,7 @@ import random
 from spade import agent
 from Behaviours.ReceiveStockAndPurchase import ReceiveStockAndPurchase_Behav
 from Behaviours.RequestProducts import RequestProducts_Behav
+from Behaviours.Return import Return_Behav
 from Classes.Position import Position
 
 class ClientAgent(agent.Agent):
@@ -17,24 +18,5 @@ class ClientAgent(agent.Agent):
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        self.add_behaviour(a)
+        # c = Return_Behav()
+        # self.add_behaviour(c)

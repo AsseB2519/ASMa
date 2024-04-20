@@ -1,47 +1,62 @@
 import random
+import numpy as np
 import jsonpickle
 
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 
-from Classes.Position import Position
-from Classes.Purchase import Return
-from Classes.Product import Product
+from Classes.Return import Return
 
-class Return_Behav (OneShotBehaviour): # Ou periodic?
+class Return_Behav (OneShotBehaviour): # Ou CyclicBehaviour
+    def generate_exponential_decay_weights(self, n, decay_factor=0.5):
+        """Generate weights with exponential decay."""
+        weights = np.exp(-decay_factor * np.arange(n))
+        return weights / np.sum(weights)
+
+    def select_products_to_return(self, products_bought, count_weights):
+        """Select a random number of product types to return based on weights."""
+        number_of_products_to_return = random.choices(range(1, len(products_bought) + 1), weights=count_weights, k=1)[0]
+        return random.sample(list(products_bought.items()), k=number_of_products_to_return)
+
+    def determine_return_quantities(self, products_to_return, quantity_decay_factor=0.5):
+        """Determine quantities for each selected product to return using exponential decay weights."""
+        return_list = []
+        for product_id, bought_quantity in products_to_return:
+            if bought_quantity > 1:
+                quantity_weights = self.generate_exponential_decay_weights(bought_quantity, decay_factor=quantity_decay_factor)
+                quantity_to_return = random.choices(range(1, bought_quantity + 1), weights=quantity_weights, k=1)[0]
+            else:
+                quantity_to_return = 1  # If only one was bought, return it
+            return_list.append((product_id, quantity_to_return))
+        return return_list
+
     async def run(self):
+        if self.agent.productsBought:
+            count_weights = self.generate_exponential_decay_weights(len(self.agent.productsBought))
+            selected_products = self.select_products_to_return(self.agent.productsBought, count_weights)
+            return_list = self.determine_return_quantities(selected_products)
 
-        produtos_devolver = {}
+            # Update the agent's productsBought dictionary
+            for product_id, return_quantity in return_list:
+                if product_id in self.agent.productsBought:
+                    self.agent.productsBought[product_id] -= return_quantity
+                    # Optionally, check if quantity goes to zero and remove or handle differently
+                    if self.agent.productsBought[product_id] <= 0:
+                        del self.agent.productsBought[product_id]
 
-        # Determine the maximum number of products to return
-        max_products_to_return = min(len(self.productsBought), 5)  # Assuming you want to return up to 5 products
+            returns = Return(str(self.agent.jid), self.agent.position, return_list)
+        
+            msg = Message(to=self.agent.get("stockmanager_contact"))            
+            msg.body = jsonpickle.encode(returns)                                
+            msg.set_metadata("performative", "request")                     
 
-        # Randomly select products and their quantities to return
-        for _ in range(max_products_to_return):
-            # Randomly select a product from self.productsBought
-            product = random.choice(list(self.productsBought.keys()))
-            # Determine the quantity to return for the selected product
-            quantity_to_return = random.randint(1, self.productsBought[product])  # Random quantity up to the bought quantity
-            # Add the selected product and quantity to the produtos_devolver dictionary
-            produtos_devolver[product] = quantity_to_return
+            print("Agent {}:".format(str(self.agent.jid)) + " Client Agent requested refund of Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+            await self.send(msg)
 
-            # Update self.productsBought to reflect the returned quantity
-            self.productsBought[product] -= quantity_to_return
+            print(f"Products returned: {return_list}")
+        else:
+            print("No products to return.")
 
-            # If the quantity of the product to return becomes 0, remove it from self.productsBought
-            if self.productsBought[product] == 0:
-                del self.productsBought[product]
 
-        print("Products to return:", produtos_devolver)
-
-        # create Request class instance
-        mr = Return(str(self.agent.jid), self.agent.position, produtos_devolver)
-        print("Agent {}:".format(str(self.agent.jid)) + " Client Agent initialized with Return Request {}".format(mr.toString()))
-
-        msg = Message(to=self.agent.get("service_contact"))             # Instantiate the message
-        msg.body = jsonpickle.encode(mr)                                # Set the message content (serialized object)
-        msg.set_metadata("performative", "request")                     # Set the message performative
-
-        print("Agent {}:".format(str(self.agent.jid)) + " Client Agent requested refund of Product(s) to Manager Agent {}".format(str(self.agent.get("service_contact"))))
-        await self.send(msg)
+        
 

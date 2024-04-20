@@ -5,7 +5,6 @@ class Return:
         self.agent_jid = agent_jid
         self.init = init
         self.products = products
-        # self.purchase = purchase
 
     def getAgent(self):
         return self.agent_jid
@@ -21,12 +20,6 @@ class Return:
 
     def setProducts(self, products: list):
         self.products = products
-
-    # def getPurchase(self):
-    #     return self.purchase
-
-    # def setPurchase(self, purchase: bool):
-    #     self.purchase = purchase
 
     def toString(self):
         product_str = ", ".join(product.toString() for product in self.products)

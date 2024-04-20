@@ -15,7 +15,6 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 request = jsonpickle.decode(msg.body)
 
                 # JID LOC e PRODUCTS
-                
                 if isinstance(request, Purchase):
                     products = request.getProducts()
                     

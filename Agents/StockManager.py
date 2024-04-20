@@ -1,7 +1,7 @@
 import csv
 from spade import agent
-from Behaviours.InformProducts import InformProducts_Behav
 from Behaviours.ProcessingStock import ProcessingStock_Behav
+
 from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
@@ -25,9 +25,6 @@ class StockManagerAgent(agent.Agent):
                 
                 # Create a Product object and append it to the products list
                 self.products.append(Product_Manager(product_id, name, category, quantity, price, weight))
-
-        inicial = InformProducts_Behav()
-        self.add_behaviour(inicial)
 
         a = ProcessingStock_Behav()
         self.add_behaviour(a)

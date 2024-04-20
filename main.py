@@ -3,7 +3,7 @@ from spade import quit_spade
 
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
-from Agents.Manager import ManagerAgent
+# from Agents.LIXO_Manager import ManagerAgent
 from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 
@@ -32,18 +32,18 @@ if __name__ == '__main__':
     res_stockmanager.result()
 
     # Create agents instances
-    manager_jid = 'manager@' + XMPP_SERVER
-    manager_agent = ManagerAgent(manager_jid, PASSWORD)
-    manager_agent.set('stock_contact', stockmanager_jid)
-    manager_agent.set('deliveryman_contact', deliverymanmanager_jid)
+    # manager_jid = 'manager@' + XMPP_SERVER
+    # manager_agent = ManagerAgent(manager_jid, PASSWORD)
+    # manager_agent.set('stock_contact', stockmanager_jid)
+    # manager_agent.set('deliveryman_contact', deliverymanmanager_jid)
 
-    stockmanager_agent.set('service_contact', manager_jid)
+    # stockmanager_agent.set('service_contact', manager_jid)
 
-    deliverymanmanager_agent.set('service_contact', manager_jid)
+    # deliverymanmanager_agent.set('service_contact', manager_jid)
 
     # Start Manager_agent and verify if its ready
-    res_manager = manager_agent.start(auto_register=True)
-    res_manager.result()
+    # res_manager = manager_agent.start(auto_register=True)
+    # res_manager.result()
 
     # Initialize list to save all active Agents in list
     client_list = []
@@ -58,7 +58,7 @@ if __name__ == '__main__':
         deliveryman_agent = DeliverymanAgent(deliveryman_jid, PASSWORD)
 
         # store manager_jid in the Deliveryman Agent knowledge base
-        deliveryman_agent.set('service_contact', manager_jid)
+        deliveryman_agent.set('deliveryman_contact', deliverymanmanager_jid)
 
         res_deliveryman = deliveryman_agent.start(auto_register=True)
         res_deliveryman.result()
@@ -78,14 +78,14 @@ if __name__ == '__main__':
         client_agent = ClientAgent(client_jid, PASSWORD)
 
         # store manager_jid in the Client Agent knowledge base
-        client_agent.set('service_contact', manager_jid)
+        client_agent.set('stockmanager_contact', stockmanager_jid)
 
         res_client = client_agent.start(auto_register=True)
         res_client.result()
         client_list.append(client_agent)
 
     # Handle interruption of all agents
-    while manager_agent.is_alive():
+    while stockmanager_agent.is_alive() and deliveryman_agent.is_alive():
         try:
             time.sleep(1)
         except KeyboardInterrupt:
