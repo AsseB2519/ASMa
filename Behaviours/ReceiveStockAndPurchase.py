@@ -43,8 +43,8 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     selected_quantity = random.choices(range(1, max_quantity + 1), weights=quantity_weights)[0]
                     lista_compras.append((product.get_product_id(), selected_quantity))
 
-                for p in lista_compras:
-                    print(p)
+                # for p in lista_compras:
+                #     print(p)
                     
                 for product, quantity in lista_compras:
                     if product in self.agent.productsBought:

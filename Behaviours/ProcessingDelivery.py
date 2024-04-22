@@ -14,13 +14,22 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
             if performative == "request":
                 request = jsonpickle.decode(msg.body)
 
-                # JID LOC e PRODUCTS
                 if isinstance(request, Purchase):
+                    client_jid = request.getAgent()
+                    loc = request.getInit()
                     products = request.getProducts()
-                    
-            elif performative == "inform":
-                inform = jsonpickle.decode(msg.body)
 
-                self.agent.products = inform
+                    # Initialize the total weight of the order
+                    total_weight = 0
 
+                    # Calculate the total weight of the order
+                    for product_id, quantity in products:
+                        if product_id in self.agent.products:
+                            weight = self.agent.products[product_id]
+                            total_weight += weight * quantity
+                        else:
+                            print(f"Product ID {product_id} not found in the products list.")
+
+                    # Optionally, handle what to do with the total weight, e.g., send a message or log it
+                    print(f"Total weight of the order is: {total_weight} kg")
 

@@ -12,10 +12,10 @@ class ProcessingStock_Behav(CyclicBehaviour):
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
+            client = str(msg.sender)
             if performative == "request":
                 if msg.body == "Request Products Available":
-                    client = str(msg.sender)
-
+                   
                     new_products = []
                     for p in self.agent.products:
                         quantidade = p.get_quantity()
@@ -44,47 +44,106 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     if isinstance(request, Purchase):
                         lista_compras = request.getProducts()
 
-                        # Assume we can fulfill the delivery unless we find otherwise
+                        # Dictionary to store the proposed quantities
+                        proposed_quantities = {}
                         can_fulfill_order = True
 
-                        # First, check if all products can be supplied
-                        for product_id, decrement in lista_compras:
+                        # Check availability of each product requested
+                        for product_id, requested_quantity in lista_compras:
                             found = False
                             for product in self.agent.products:
                                 if product.get_product_id() == product_id:
                                     found = True
-                                    if product.get_quantity() < decrement:
-                                        # Not enough stock
+                                    available_quantity = product.get_quantity()
+                                    if available_quantity < requested_quantity:
+                                        # Not enough stock, propose available quantity
+                                        proposed_quantities[product_id] = available_quantity
                                         can_fulfill_order = False
-                                        print(f"Not enough stock for product {product_id}")
-                                    break
+                                        print(f"Not enough stock for product {product_id}, available: {available_quantity}")
+                                    else:
+                                        # Enough stock, propose requested quantity
+                                        proposed_quantities[product_id] = requested_quantity
+                                    # break
                             if not found:
                                 can_fulfill_order = False
                                 print(f"Product {product_id} not found")
 
-                        # Only proceed if all products can be supplied
-                        if can_fulfill_order:
-                            # Now decrement the stock
-                            for product_id, decrement in lista_compras:
+                        if not can_fulfill_order:
+                            # If some items can't be fully supplied, send a negotiation proposal
+                            negotiation_msg = Message(to=client) 
+                            negotiation_msg.body = jsonpickle.encode(proposed_quantities)
+                            negotiation_msg.set_metadata("performative", "propose")
+
+                            print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent propose Client Agent {}".format(client))
+                            await self.send(negotiation_msg)
+                        else:
+                            # If all items can be supplied, decrement the stock and confirm the order
+                            for product_id, decrement in proposed_quantities.items():
                                 for product in self.agent.products:
                                     if product.get_product_id() == product_id:
                                         new_quantity = product.get_quantity() - decrement
                                         product.set_quantity(new_quantity)
-                                        break
+                                        # break
 
-                            # PROCESSAR A MENSAGEM PARA O DELIVERY
-                            # Send the message to the deliveryman manager if the order can be fully supplied
-                            msg = Message(to=self.agent.get("deliveryman_contact"))  
-                            msg.body = jsonpickle.encode(request)                         
-                            msg.set_metadata("performative", "request")     
+                            # Send confirmation to the delivery manager
+                            confirmation_msg = Message(to=self.agent.get("deliveryman_contact"))
+                            confirmation_msg.body = jsonpickle.encode(request)
+                            confirmation_msg.set_metadata("performative", "request")
 
                             print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
-                            await self.send(msg)
-                        else:
-                            print("Unable to fulfill order due to insufficient stock or missing products.")
+                            await self.send(confirmation_msg)
+
+                        # # Assume we can fulfill the delivery unless we find otherwise
+                        # can_fulfill_order = True
+
+                        # # First, check if all products can be supplied
+                        # for product_id, decrement in lista_compras:
+                        #     found = False
+                        #     for product in self.agent.products:
+                        #         if product.get_product_id() == product_id:
+                        #             found = True
+                        #             if product.get_quantity() < decrement:
+                        #                 # Not enough stock
+                        #                 can_fulfill_order = False
+                        #                 print(f"Not enough stock for product {product_id}")
+
+                        #                 NEGOCIATION HERE
+
+                        #                 # Send the message to the deliveryman manager if the order can be fully supplied
+                        #                 msg = Message(to=client)  
+                        #                 msg.body = jsonpickle.encode(CHANGE)                         
+                        #                 msg.set_metadata("performative", "propose")     
+
+                        #                 print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman to DeliverymanManager Agent {}".format(client))
+                        #                 await self.send(msg)
+                        #             break
+                        #     if not found:
+                        #         can_fulfill_order = False
+                        #         print(f"Product {product_id} not found")
+
+                        # # Only proceed if all products can be supplied
+                        # if can_fulfill_order:
+                        #     # Now decrement the stock
+                        #     for product_id, decrement in lista_compras:
+                        #         for product in self.agent.products:
+                        #             if product.get_product_id() == product_id:
+                        #                 new_quantity = product.get_quantity() - decrement
+                        #                 product.set_quantity(new_quantity)
+                        #                 break
+
+                        #     # PROCESSAR A MENSAGEM PARA O DELIVERY
+                        #     # Send the message to the deliveryman manager if the order can be fully supplied
+                        #     msg = Message(to=self.agent.get("deliveryman_contact"))  
+                        #     msg.body = jsonpickle.encode(request)                         
+                        #     msg.set_metadata("performative", "request")     
+
+                        #     print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+                        #     await self.send(msg)
+                        # else:
+                        #     print("Unable to fulfill order due to insufficient stock or missing products.")
                     
                     elif isinstance(request, Return):
-                        # Mandar para DeliverymanManager
+
                         msg = Message(to=self.agent.get("deliveryman_contact"))       
                         msg.body = jsonpickle.encode(request)                         
                         msg.set_metadata("performative", "request")                   
@@ -93,6 +152,12 @@ class ProcessingStock_Behav(CyclicBehaviour):
                         await self.send(msg)
                         
                     else: print("Error2")
+
+            elif performative == "accept_proposal":
+                print("accept_proposal")
+            
+            elif performative == "reject_proposal":
+                print("reject_proposal")
 
             # self.kill()  # kill the Processing_Behav 
         else:

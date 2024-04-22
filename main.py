@@ -64,7 +64,6 @@ if __name__ == '__main__':
         res_deliveryman.result()
         deliveryman_list.append(deliveryman_agent)
 
-    # wait for Taxi agents to be prepared
     time.sleep(1)
 
     # Connect Client Agents and start them

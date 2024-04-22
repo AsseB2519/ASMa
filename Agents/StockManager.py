@@ -13,7 +13,7 @@ class StockManagerAgent(agent.Agent):
         self.products = []
 
         # Read the products from the CSV file
-        with open('products.csv', newline='') as csvfile:
+        with open('stock_products.csv', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
                 product_id = int(row['ID'])
@@ -21,10 +21,9 @@ class StockManagerAgent(agent.Agent):
                 category = row['Category']
                 quantity = int(row['Quantity'])
                 price = float(row['Price'])
-                weight = float(row['Weight'])
                 
                 # Create a Product object and append it to the products list
-                self.products.append(Product_Manager(product_id, name, category, quantity, price, weight))
+                self.products.append(Product_Manager(product_id, name, category, quantity, price))
 
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
