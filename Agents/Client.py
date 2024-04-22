@@ -1,6 +1,6 @@
 import random
 from spade import agent
-from Behaviours.Negociation import Negociation_Behav
+# from Behaviours.Negociation import Negociation_Behav
 from Behaviours.ReceiveStockAndPurchase import ReceiveStockAndPurchase_Behav
 from Behaviours.RequestProducts import RequestProducts_Behav
 from Behaviours.Return import Return_Behav
@@ -21,6 +21,3 @@ class ClientAgent(agent.Agent):
 
         # c = Return_Behav()
         # self.add_behaviour(c)
-
-        # d = Negociation_Behav()    
-        # self.add_behaviour(d)
