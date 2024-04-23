@@ -1,3 +1,4 @@
+import math
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
@@ -12,31 +13,36 @@ class Transport_Behav(CyclicBehaviour):
             performative = msg.get_metadata("performative")
             if performative == "inform":
 
-                print("Cheguei")
+                self.agent.available = False
 
-                # self.agent.current_location.setAvailable(False)
+                inform = jsonpickle.decode(msg.body)
 
-                # # Taxi takes 1 second per transportation
-                # await asyncio.sleep(3)
+                client_jid = inform.getAgent()
+                loc = inform.getPosition()
+                weight = inform.getWeight()
 
-                # # Update current position and make Taxi available
-                # make_request = jsonpickle.decode(msg.body)
-                # self.agent.current_location.setPosition(make_request.getDest())
-                # self.agent.current_location.setAvailable(True)
+                x_dest = loc.getX()
+                y_dest = loc.getY()
 
-                # # Send Confirm Message to Client and Manager
-                # msg_to_manager = Message(to=str(msg.sender))  # Instantiate the message
-                # msg_to_manager.body = jsonpickle.encode(
-                #     self.agent.current_location)  # Set the message content (serialized object)
-                # msg_to_manager.set_metadata("performative", "confirm")  # Set the message performative
+                x_ori = self.agent.position.getX()
+                y_ori = self.agent.position.getY()
 
-                # msg_to_client = Message(to=make_request.getAgent())  # Instantiate the message
-                # msg_to_client.body = jsonpickle.encode(
-                #     self.agent.current_location)  # Set the message content (serialized object)
-                # msg_to_client.set_metadata("performative", "confirm")  # Set the message performative
+                distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                # await self.send(msg_to_manager)
-                # await self.send(msg_to_client)
+                print("Viagem 1")
+                await asyncio.sleep(distance/10)
+
+                msg = Message(to=client_jid)       
+                msg.body = jsonpickle.encode("Encomenda")                         
+                msg.set_metadata("performative", "encomenda")                   
+    
+                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Agent {}".format(str(client_jid)))
+                await self.send(msg)                
+
+                await asyncio.sleep(distance/10)
+                print("Viagem 2")
+
+                self.agent.available = True
 
             else:
                 print("Agent {}:".format(str(self.agent.jid)) + " Message not understood!")

@@ -1,3 +1,4 @@
+import random
 import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
@@ -35,18 +36,24 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                     delivery = Delivery(client_jid, loc, weight)
 
-                    # Selecionar o Delivery
-                    deliveryman = self.agent.deliveryman_subscribed[0].getAgent()
+                    # Filtrar os entregadores disponíveis
+                    entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() == True]
 
-                    print(deliveryman)
-                    
-                    msg = Message(to=deliveryman)             
-                    msg.body = jsonpickle.encode(delivery)                               
-                    msg.set_metadata("performative", "inform")
+                    # Selecionar aleatoriamente um entregador disponível
+                    if entregadores_disponiveis:
+                        deliveryman = random.choice(entregadores_disponiveis).getAgent()
+                     
+                        msg = Message(to=deliveryman)             
+                        msg.body = jsonpickle.encode(delivery)                               
+                        msg.set_metadata("performative", "inform")
 
-                    print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent inform Deliveryman Agent {str(deliveryman)}")
-                    await self.send(msg)
+                        print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent inform Deliveryman Agent {str(deliveryman)}")
+                        await self.send(msg)
                     
+                    else:
+                        # Lidar com o caso em que não há entregadores disponíveis
+                        print("No deliveryman available.")
+                        deliveryman = None  # Ou qualquer outra ação que você queira tomar
 
             elif performative == "subscribe":
                 deliveryman_register = jsonpickle.decode(msg.body)

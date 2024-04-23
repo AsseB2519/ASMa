@@ -6,11 +6,13 @@ from spade.message import Message
 import jsonpickle
 
 from Classes.InformPosition import InformPosition
+from Classes.Position import Position
 
 class Register_Behav(OneShotBehaviour):
     
     async def run(self):
-        register = InformPosition(str(self.agent.jid), True)
+        
+        register = InformPosition(str(self.agent.jid), self.agent.position, True)
 
         msg = Message(to=self.agent.get("deliveryman_contact"))             
         msg.body = jsonpickle.encode(register)       
