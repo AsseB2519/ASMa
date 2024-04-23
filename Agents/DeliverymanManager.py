@@ -5,6 +5,8 @@ from Behaviours.ProcessingDelivery import ProcessingDelivery_Behav
 
 class DeliverymanManagerAgent(agent.Agent):
 
+    deliveryman_subscribed = []
+
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
 
@@ -14,7 +16,7 @@ class DeliverymanManagerAgent(agent.Agent):
         # products_delivered = {}
 
         self.products = {}
-
+        
         with open('delivery_products.csv', newline='') as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:

@@ -1,8 +1,15 @@
 from spade import agent
 
-class DeliverymanAgent(agent.Agent):
+from Behaviours.Register import Register_Behav
+from Behaviours.Transport import Transport_Behav
 
-    current_location = None
+class DeliverymanAgent(agent.Agent):
 
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
+
+        a = Register_Behav()
+        self.add_behaviour(a)
+        b = Transport_Behav()
+        self.add_behaviour(b)
+        

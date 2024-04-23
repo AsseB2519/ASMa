@@ -3,6 +3,7 @@ from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
 from Classes.Purchase import Purchase
+from Classes.Delivery import Delivery
 
 class ProcessingDelivery_Behav(CyclicBehaviour):
 
@@ -30,6 +31,25 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                         else:
                             print(f"Product ID {product_id} not found in the products list.")
 
-                    # Optionally, handle what to do with the total weight, e.g., send a message or log it
-                    print(f"Total weight of the order is: {total_weight} kg")
+                    # print(f"Total weight of the order is: {total_weight} kg")
 
+                    delivery = Delivery(client_jid, loc, weight)
+
+                    # Selecionar o Delivery
+                    deliveryman = self.agent.deliveryman_subscribed[0].getAgent()
+
+                    print(deliveryman)
+                    
+                    msg = Message(to=deliveryman)             
+                    msg.body = jsonpickle.encode(delivery)                               
+                    msg.set_metadata("performative", "inform")
+
+                    print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent inform Deliveryman Agent {str(deliveryman)}")
+                    await self.send(msg)
+                    
+
+            elif performative == "subscribe":
+                deliveryman_register = jsonpickle.decode(msg.body)
+                self.agent.deliveryman_subscribed.append(deliveryman_register)
+
+                print("Agent {}:".format(str(self.agent.jid)) + " DeliverymanManager Agent subscribed Deliveryman Agent {}".format(str(msg.sender)))

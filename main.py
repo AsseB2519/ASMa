@@ -3,7 +3,6 @@ from spade import quit_spade
 
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
-# from Agents.LIXO_Manager import ManagerAgent
 from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 
@@ -14,7 +13,13 @@ PASSWORD = 'NOPASSWORD'
 MAX_DELIVERYMAN = 1  # limit number of deliveryman
 MAX_CLIENTS = 1  # limit number of clients
 
+WAREHOUSE_X = 50
+WAREHOUSE_Y = 50
+
 if __name__ == '__main__':
+
+    # warehouse_location = input("Enter the location of the Warehouse: ")
+
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)
 
@@ -30,21 +35,7 @@ if __name__ == '__main__':
     # Start Stock Manager and verify if its ready
     res_stockmanager = stockmanager_agent.start(auto_register=True)
     res_stockmanager.result()
-
-    # Create agents instances
-    # manager_jid = 'manager@' + XMPP_SERVER
-    # manager_agent = ManagerAgent(manager_jid, PASSWORD)
-    # manager_agent.set('stock_contact', stockmanager_jid)
-    # manager_agent.set('deliveryman_contact', deliverymanmanager_jid)
-
-    # stockmanager_agent.set('service_contact', manager_jid)
-
-    # deliverymanmanager_agent.set('service_contact', manager_jid)
-
-    # Start Manager_agent and verify if its ready
-    # res_manager = manager_agent.start(auto_register=True)
-    # res_manager.result()
-
+    
     # Initialize list to save all active Agents in list
     client_list = []
     deliveryman_list = []
