@@ -17,6 +17,7 @@ class Transport_Behav(CyclicBehaviour):
 
                 inform = jsonpickle.decode(msg.body)
 
+                id = inform.getId()
                 client_jid = inform.getAgent()
                 loc = inform.getPosition()
                 weight = inform.getWeight()

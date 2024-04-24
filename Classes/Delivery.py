@@ -1,10 +1,14 @@
 from Classes.Position import Position
 
 class Delivery:
-    def __init__(self, agent_jid: str, position: Position, weight: float): 
+    def __init__(self, id: int, agent_jid: str, position: Position, weight: float): 
+        self.id = id
         self.agent_jid = agent_jid
         self.position = position
         self.weight = weight
+
+    def getId(self):
+        return self.id
 
     def getAgent(self):
         return self.agent_jid
@@ -25,4 +29,4 @@ class Delivery:
         self.weight = weight
 
     def toString(self):
-        return "InformPosition [agent_jid=" + self.agent_jid + ", position=" + self.position.toString() + ", available=" + str(self.weight) + "]" 
+        return "InformPosition [id=" + str(self.id) + ", agent_jid=" + self.agent_jid + ", position=" + self.position.toString() + ", available=" + str(self.weight) + "]"

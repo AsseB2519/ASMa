@@ -7,6 +7,8 @@ from Classes.Purchase import Purchase
 from Classes.Delivery import Delivery
 
 class ProcessingDelivery_Behav(CyclicBehaviour):
+    
+    delivery_id_counter = 0
 
     async def run(self):
         msg = await self.receive(timeout=10) 
@@ -33,8 +35,10 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                             print(f"Product ID {product_id} not found in the products list.")
 
                     # print(f"Total weight of the order is: {total_weight} kg")
+                    self.delivery_id_counter += 1
+                    delivery_id = self.delivery_id_counter
 
-                    delivery = Delivery(client_jid, loc, weight)
+                    delivery = Delivery(delivery_id, client_jid, loc, total_weight)
                     
                     # Filtrar os entregadores disponíveis
                     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() == True and entregador.getType() == "Purchase"]
@@ -49,6 +53,8 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                         print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent inform Deliveryman Agent {str(deliveryman)}")
                         await self.send(msg)
+
+                        self.agent.products_to_be_delivered[delivery_id] = delivery
                     
                     else:
                         # Lidar com o caso em que não há entregadores disponíveis
