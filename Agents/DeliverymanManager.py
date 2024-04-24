@@ -7,13 +7,12 @@ class DeliverymanManagerAgent(agent.Agent):
 
     deliveryman_subscribed = []
 
+
+    products_to_be_delivered = {}
+    products_delivered = {}
+
     async def setup(self):
         print("Agent {}".format(str(self.jid)) + " starting...")
-
-        # deliverys_list = []
-
-        # products_to_be_delivered = {}
-        # products_delivered = {}
 
         self.products = {}
         

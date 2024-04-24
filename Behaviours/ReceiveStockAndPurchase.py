@@ -91,5 +91,8 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     await self.send(msg)
 
             elif performative == "delivery": 
+                # Não sei o que fazer
                 print("1")
+
+
             else: print("Error3")

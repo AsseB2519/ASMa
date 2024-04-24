@@ -53,6 +53,12 @@ class Transport_Behav(CyclicBehaviour):
 
                 self.agent.available = True
 
+                # msg = Message(to=self.agent.get("deliverymanager_contact"))   
+                # msg.body = jsonpickle.encode("Encomenda")                         
+                # msg.set_metadata("performative", "delivery")                   
+    
+                # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent informed package delivered to DeliverymanManager Agent {}".format(str(self.agent.get("deliverymanager_contact"))))
+                # await self.send(msg)  
 
             else:
                 print("Agent {}:".format(str(self.agent.jid)) + " Message not understood!")

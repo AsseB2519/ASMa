@@ -2,6 +2,7 @@ import csv
 from spade import agent
 from Behaviours.ProcessingStock import ProcessingStock_Behav
 
+from Behaviours.RequestSupply import RequestSupply_Behav
 from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
@@ -27,3 +28,7 @@ class StockManagerAgent(agent.Agent):
 
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
+
+        # duas listas de products fazer a comparação e quando uma vir que esta a 75% por exemplo dispara o behaviour
+        # b = RequestSupply_Behav()
+        # self.add_behaviour(b)

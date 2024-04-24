@@ -1,10 +1,11 @@
 from Classes.Position import Position
 
 class InformPosition:
-    def __init__(self, agent_jid: str, position: Position, available: bool):
+    def __init__(self, agent_jid: str, position: Position, available: bool, type: str):
         self.agent_jid = agent_jid
         self.position = position
         self.available = available
+        self.type = type  # Add type attribute here
 
     def getAgent(self):
         return self.agent_jid
@@ -24,5 +25,8 @@ class InformPosition:
     def setAvailable(self, available: bool):
         self.available = available
 
+    def getType(self):
+        return self.type
+
     def toString(self):
-        return "InformPosition [agent_jid=" + self.agent_jid + ", position=" + self.position.toString() + ", available=" + str(self.available) + "]"
+        return "InformPosition [agent_jid=" + self.agent_jid + ", position=" + self.position.toString() + ", available=" + str(self.available) + ", type=" + self.type + "]" 

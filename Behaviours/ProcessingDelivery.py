@@ -37,7 +37,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                     delivery = Delivery(client_jid, loc, weight)
                     
                     # Filtrar os entregadores disponíveis
-                    entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() == True]
+                    entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() == True and entregador.getType() == "Purchase"]
 
                     # Selecionar aleatoriamente um entregador disponível
                     if entregadores_disponiveis:
@@ -54,6 +54,25 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                         # Lidar com o caso em que não há entregadores disponíveis
                         print("No deliveryman available.")
                         deliveryman = None  # Ou qualquer outra ação que você queira tomar
+
+                        # # Filtrar os entregadores disponíveis
+                        # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
+
+                        # # Esperar até que haja entregadores disponíveis
+                        # while not entregadores_disponiveis:
+                        #     print("No deliveryman available. Waiting...")
+                        #     await asyncio.sleep(1)  # Espera por 1 segundo antes de verificar novamente
+                        #     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
+
+                        # # Selecionar aleatoriamente um entregador disponível
+                        # deliveryman = random.choice(entregadores_disponiveis).getAgent()
+
+                        # msg = Message(to=deliveryman)             
+                        # msg.body = jsonpickle.encode(delivery)                               
+                        # msg.set_metadata("performative", "inform")
+
+                        # print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent inform Deliveryman Agent {str(deliveryman)}")
+                        # await self.send(msg)
 
             elif performative == "subscribe":
                 deliveryman_register = jsonpickle.decode(msg.body)

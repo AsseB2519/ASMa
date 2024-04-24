@@ -5,6 +5,7 @@ from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
 from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
+from Agents.Supplier import SupplierAgent
 
 
 XMPP_SERVER = 'laptop-ci4qet97'
@@ -27,15 +28,23 @@ if __name__ == '__main__':
     res_deliverymanmanager = deliverymanmanager_agent.start(auto_register=True)
     res_deliverymanmanager.result()
 
+    supplier_jid = 'supplier@' + XMPP_SERVER
+    supplier_agent = SupplierAgent(supplier_jid, PASSWORD)
+
+    # Start Supplier and verify if its ready
+    res_supplier = supplier_agent.start(auto_register=True)
+    res_supplier.result()
+
     stockmanager_jid = 'stockmanager@' + XMPP_SERVER
     stockmanager_agent = StockManagerAgent(stockmanager_jid, PASSWORD)
 
     stockmanager_agent.set('deliveryman_contact', deliverymanmanager_jid)
+    stockmanager_agent.set('supplier_contact', supplier_jid)
 
     # Start Stock Manager and verify if its ready
     res_stockmanager = stockmanager_agent.start(auto_register=True)
-    res_stockmanager.result()
-    
+    res_stockmanager.result() 
+
     # Initialize list to save all active Agents in list
     client_list = []
     deliveryman_list = []

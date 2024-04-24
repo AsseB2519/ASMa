@@ -12,6 +12,10 @@ class DeliverymanAgent(agent.Agent):
     async def setup(self):
         self.position = Position(random.randint(1, 100), random.randint(1, 100))
         
+        actions = ["Purchase", "Return"]
+        probabilities = [0.75, 0.25]  
+        self.type = random.choices(actions, weights=probabilities)[0]
+        
         print("Agent {}".format(str(self.jid)) + " starting...")
 
         a = Register_Behav()
