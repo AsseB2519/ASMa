@@ -29,20 +29,30 @@ class Transport_Behav(CyclicBehaviour):
 
                 distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                print("Viagem 1")
-                await asyncio.sleep(distance/10)
+                # print("Viagem 1")
+                await asyncio.sleep(1)
+                # await asyncio.sleep(distance/10)
 
                 msg = Message(to=client_jid)       
                 msg.body = jsonpickle.encode("Encomenda")                         
-                msg.set_metadata("performative", "encomenda")                   
+                msg.set_metadata("performative", "delivery")                   
     
                 print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Agent {}".format(str(client_jid)))
                 await self.send(msg)                
 
-                await asyncio.sleep(distance/10)
-                print("Viagem 2")
+                self.agent.position.setX(x_dest)
+                self.agent.position.setY(y_dest)
+
+                # DeliveryManager ??!?!
+
+                await asyncio.sleep(1)
+                # print("Viagem 2")
+
+                self.agent.position.setX(x_ori)
+                self.agent.position.setY(y_ori)
 
                 self.agent.available = True
+
 
             else:
                 print("Agent {}:".format(str(self.agent.jid)) + " Message not understood!")

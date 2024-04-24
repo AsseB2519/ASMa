@@ -35,7 +35,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                     # print(f"Total weight of the order is: {total_weight} kg")
 
                     delivery = Delivery(client_jid, loc, weight)
-
+                    
                     # Filtrar os entregadores disponíveis
                     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() == True]
 
