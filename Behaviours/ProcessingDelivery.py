@@ -15,7 +15,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
-            if performative == "request":
+            if performative == "inform":
                 request = jsonpickle.decode(msg.body)
 
                 if isinstance(request, Purchase):

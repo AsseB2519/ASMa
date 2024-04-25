@@ -2,12 +2,12 @@ import random
 import numpy as np
 import jsonpickle
 
-from spade.behaviour import OneShotBehaviour
+from spade.behaviour import PeriodicBehaviour
 from spade.message import Message
 
 from Classes.Return import Return
 
-class Return_Behav (OneShotBehaviour): # Ou CyclicBehaviour
+class Return_Behav (PeriodicBehaviour): 
     def generate_exponential_decay_weights(self, n, decay_factor=0.5):
         """Generate weights with exponential decay."""
         weights = np.exp(-decay_factor * np.arange(n))
@@ -48,9 +48,9 @@ class Return_Behav (OneShotBehaviour): # Ou CyclicBehaviour
         
             msg = Message(to=self.agent.get("stockmanager_contact"))            
             msg.body = jsonpickle.encode(returns)                                
-            msg.set_metadata("performative", "request")                     
+            msg.set_metadata("performative", "return")                     
 
-            print("Agent {}:".format(str(self.agent.jid)) + " Client Agent requested refund of Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+            print("Agent {}:".format(str(self.agent.jid)) + " Client Agent returned Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
             await self.send(msg)
 
             print(f"Products returned: {return_list}")

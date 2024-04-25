@@ -59,7 +59,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 msg = Message(to=self.agent.get("stockmanager_contact"))             
                 msg.body = jsonpickle.encode(purchase)                               
-                msg.set_metadata("performative", "request")
+                msg.set_metadata("performative", "purchase")
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
                 await self.send(msg)
@@ -67,10 +67,11 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
             elif performative == "propose":
                     propose = jsonpickle.decode(msg.body)
                     # products = propose.getProducts()
-
-                    # Meter funcao probabilistica
+                    
                     # Randomly decide to accept or deny the proposal
-                    decision = random.choice(["accept_proposal", "reject_proposal"])
+                    actions = ["accept_proposal", "reject_proposal"]
+                    probabilities = [0.75, 0.25]  
+                    decision = random.choices(actions, weights=probabilities)[0]
 
                     lista_compras_neg = []
 

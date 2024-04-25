@@ -1,3 +1,4 @@
+import asyncio
 import random
 from spade import agent
 from Behaviours.ReceiveStockAndPurchase import ReceiveStockAndPurchase_Behav
@@ -13,11 +14,14 @@ class ClientAgent(agent.Agent):
 
         self.productsBought = {}
 
-        a = RequestProducts_Behav() 
+        # a = RequestProducts_Behav() 
+        a = RequestProducts_Behav(period=20)
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
 
-        # c = Return_Behav()
+        # await asyncio.sleep(3) 
+        
+        # c = Return_Behav(period=40)
         # self.add_behaviour(c)
 

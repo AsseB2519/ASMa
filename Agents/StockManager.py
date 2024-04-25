@@ -3,6 +3,7 @@ from spade import agent
 from Behaviours.ProcessingStock import ProcessingStock_Behav
 
 from Behaviours.RequestSupply import RequestSupply_Behav
+from Behaviours.Stats import Stats_Behav
 from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
@@ -29,6 +30,9 @@ class StockManagerAgent(agent.Agent):
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
 
-        # duas listas de products fazer a comparação e quando uma vir que esta a 75% por exemplo dispara o behaviour
-        # b = RequestSupply_Behav()
+        # b = RequestSupply_Behav(period=60)
         # self.add_behaviour(b)
+
+        c = Stats_Behav(periodic = 60)
+        self.add_behaviour(c)
+
