@@ -23,9 +23,10 @@ class StockManagerAgent(agent.Agent):
                 category = row['Category']
                 quantity = int(row['Quantity'])
                 price = float(row['Price'])
+                max_quantity = int(row['Max_Quantity'])
                 
                 # Create a Product object and append it to the products list
-                self.products.append(Product_Manager(product_id, name, category, quantity, price))
+                self.products.append(Product_Manager(product_id, name, category, quantity, price, max_quantity))
 
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
@@ -33,6 +34,6 @@ class StockManagerAgent(agent.Agent):
         # b = RequestSupply_Behav(period=60)
         # self.add_behaviour(b)
 
-        c = Stats_Behav(periodic = 60)
-        self.add_behaviour(c)
+        # c = Stats_Behav(periodic = 60)
+        # self.add_behaviour(c)
 

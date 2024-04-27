@@ -10,6 +10,7 @@ class DeliverymanAgent(agent.Agent):
     available = True
 
     async def setup(self):
+
         self.position = Position(random.randint(1, 100), random.randint(1, 100))
         
         categories = ["bike", "car", "truck"]  # List of possible vehicle categories
@@ -17,7 +18,8 @@ class DeliverymanAgent(agent.Agent):
         self.type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]
-        probabilities = [0.75, 0.25]  
+        # probabilities = [0.75, 0.25] 
+        probabilities = [1, 0] 
         self.type = random.choices(actions, weights=probabilities)[0]
         
         print("Agent {}".format(str(self.jid)) + " starting...")

@@ -30,36 +30,34 @@ class Transport_Behav(CyclicBehaviour):
 
                 distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                # print("Viagem 1")
                 await asyncio.sleep(1)
                 # await asyncio.sleep(distance/10)
-
-                msg = Message(to=client_jid)       
-                msg.body = jsonpickle.encode("Encomenda")                         
-                msg.set_metadata("performative", "delivery")                   
-    
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Agent {}".format(str(client_jid)))
-                await self.send(msg)                
 
                 self.agent.position.setX(x_dest)
                 self.agent.position.setY(y_dest)
 
-                # DeliveryManager ??!?!
+                msg = Message(to=client_jid)       
+                # MUDAR
+                msg.body = jsonpickle.encode("Encomenda")                          
+                msg.set_metadata("performative", "delivery")                   
+
+                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
+                await self.send(msg)                
+
+                msg = Message(to=self.agent.get("deliveryman_contact"))     
+                msg.body = jsonpickle.encode(inform)                         
+                msg.set_metadata("performative", "confirmation")  
+
+                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(str(client_jid)))
+                await self.send(msg)                
 
                 await asyncio.sleep(1)
-                # print("Viagem 2")
+                # await asyncio.sleep(distance/10)
 
                 self.agent.position.setX(x_ori)
                 self.agent.position.setY(y_ori)
 
                 self.agent.available = True
-
-                # msg = Message(to=self.agent.get("deliverymanager_contact"))   
-                # msg.body = jsonpickle.encode("Encomenda")                         
-                # msg.set_metadata("performative", "delivery")                   
-    
-                # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent informed package delivered to DeliverymanManager Agent {}".format(str(self.agent.get("deliverymanager_contact"))))
-                # await self.send(msg)  
 
             else:
                 print("Agent {}:".format(str(self.agent.jid)) + " Message not understood!")
