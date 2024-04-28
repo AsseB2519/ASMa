@@ -1,4 +1,5 @@
 import time
+import config
 from spade import quit_spade
 
 from Agents.Client import ClientAgent
@@ -7,19 +8,16 @@ from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 from Agents.Supplier import SupplierAgent
 
-
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
 MAX_DELIVERYMAN = 1  # limit number of deliveryman
-MAX_CLIENTS = 1  # limit number of clients
-
-WAREHOUSE_X = 50
-WAREHOUSE_Y = 50
+MAX_CLIENTS = 3  # limit number of clients
 
 if __name__ == '__main__':
 
-    # warehouse_location = input("Enter the location of the Warehouse: ")
+    config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
+    config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
 
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)

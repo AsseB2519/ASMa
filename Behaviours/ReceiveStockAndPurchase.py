@@ -93,7 +93,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
             elif performative == "delivery": 
                 # Não sei o que fazer
-                print("1")
+                print("Chegou")
 
 
             else: print("Error3")

@@ -72,6 +72,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 print("Agent {}:".format(str(self.agent.jid)) + " DeliverymanManager Agent subscribed Deliveryman Agent {}".format(str(msg.sender)))
 
             elif performative == "confirmation":
+                print("Chegou Manager")
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 

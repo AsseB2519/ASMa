@@ -1,66 +1,71 @@
 import math
-from spade.behaviour import CyclicBehaviour
-from spade.message import Message
-
+import config
 import asyncio
+from spade.message import Message
+from spade.behaviour import CyclicBehaviour
 import jsonpickle
 
 class Transport_Behav(CyclicBehaviour):
     async def run(self):
         msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
         if msg:
-            # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
             if performative == "inform":
-
-                self.agent.available = False
+                # self.agent.available = False
 
                 inform = jsonpickle.decode(msg.body)
+                self.agent.deliveries.append(inform)
 
-                id = inform.getId()
-                client_jid = inform.getAgent()
-                loc = inform.getPosition()
-                weight = inform.getWeight()
+                # Calculate the total weight of all scheduled deliveries
+                total_weight = sum([d.getWeight() for d in self.agent.deliveries])
+                max_capacity = {'bike': 1, 'car': 3, 'truck': 5}[self.agent.vehicle_type]
+                threshold_weight = 0.8 * max_capacity  # 80% of the maximum capacity
 
-                x_dest = loc.getX()
-                y_dest = loc.getY()
+                # Only proceed if the total weight reaches at least 80% of the vehicle's capacity
+                if total_weight >= threshold_weight:
+                    self.agent.available = False
+                    for delivery in self.agent.deliveries:
+                        client_jid = delivery.getAgent()
+                        loc = delivery.getPosition()
+                        x_dest = loc.getX()
+                        y_dest = loc.getY()
 
-                x_ori = self.agent.position.getX()
-                y_ori = self.agent.position.getY()
+                        x_ori = self.agent.position.getX()
+                        y_ori = self.agent.position.getY()
+                        distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
+                        print(distance)
+                        await asyncio.sleep(distance/10) 
 
-                await asyncio.sleep(1)
-                # await asyncio.sleep(distance/10)
+                        self.agent.position.setX(x_dest)
+                        self.agent.position.setY(y_dest)
 
-                self.agent.position.setX(x_dest)
-                self.agent.position.setY(y_dest)
+                        msg = Message(to=client_jid)
+                        msg.body = jsonpickle.encode("Encomenda")
+                        msg.set_metadata("performative", "delivery")
 
-                msg = Message(to=client_jid)       
-                # MUDAR
-                msg.body = jsonpickle.encode("Encomenda")                          
-                msg.set_metadata("performative", "delivery")                   
+                        print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
+                        await self.send(msg)
+                        
+                        msg = Message(to=self.agent.get("deliveryman_contact"))
+                        msg.body = jsonpickle.encode(delivery)
+                        msg.set_metadata("performative", "confirmation")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
-                await self.send(msg)                
+                        print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(str(client_jid)))
+                        await self.send(msg)    
 
-                msg = Message(to=self.agent.get("deliveryman_contact"))     
-                msg.body = jsonpickle.encode(inform)                         
-                msg.set_metadata("performative", "confirmation")  
+                    await asyncio.sleep(1)
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(str(client_jid)))
-                await self.send(msg)                
+                    self.agent.position.setX(int(config.WAREHOUSE_X))
+                    self.agent.position.setY(int(config.WAREHOUSE_Y))
 
-                await asyncio.sleep(1)
-                # await asyncio.sleep(distance/10)
-
-                self.agent.position.setX(x_ori)
-                self.agent.position.setY(y_ori)
-
-                self.agent.available = True
-
+                    self.agent.available = True
+                    self.agent.deliveries.clear()  # Clear the list after deliveries
+                else:
+                    print(f"Agent {self.agent.jid}: Current total weight {total_weight}kg does not meet the minimum threshold of {threshold_weight}kg. Waiting for more packages.")
+                    # self.agent.available = True  # Still available for receiving more packages
             else:
-                print("Agent {}:".format(str(self.agent.jid)) + " Message not understood!")
+                print(f"Agent {self.agent.jid}: Message not understood!")
 
         else:
-            print("Agent {}:".format(str(self.agent.jid)) + "Did not received any message after 10 seconds")
+            print(f"Agent {self.agent.jid}: Did not receive any message after 10 seconds")
