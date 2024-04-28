@@ -120,6 +120,13 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             if self.agent.productsBought[product_id] <= 0:
                                 del self.agent.productsBought[product_id]
 
+                    # Adicionar probabilidade para ver o que está em estado ou não por Categoria
+                    for product_id, quantity in lista_compras:
+                        for product in self.agent.products:
+                            if product.get_product_id() == product_id:
+                                q = product.get_quantity()
+                                product.set_quantity(q + quantity)
+
                     msg = Message(to=self.agent.get("deliveryman_contact"))       
                     msg.body = jsonpickle.encode(request)                         
                     msg.set_metadata("performative", "return")                   
@@ -154,7 +161,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
             
             # elif performative == "reject_proposal":
                 # print("reject_proposal")
-
+            
+            elif performative == "confirmation_refund":
+                print("a implementar")
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     
         # else:

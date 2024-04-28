@@ -52,18 +52,6 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                         print("No purchase deliveryman available. Waiting...")
                         await asyncio.sleep(5)  # Wait for 5 seconds before checking again
 
-                # # Filtrar os entregadores disponíveis
-                # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
-
-                # # Esperar até que haja entregadores disponíveis
-                # while not entregadores_disponiveis:
-                #     print("No purchase deliveryman available. Waiting...")
-                #     await asyncio.sleep(5)  # Espera por 1 segundo antes de verificar novamente
-                #     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
-
-                # Selecionar aleatoriamente um entregador disponível
-                # deliveryman = random.choice(entregadores_disponiveis).getAgent()
-
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
 
@@ -108,19 +96,8 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                     if entregadores_disponiveis:
                         break  # Exit the loop if there are available deliverymen
                     else:
-                        print("No purchase deliveryman available. Waiting...")
+                        print("No return deliveryman available. Waiting...")
                         await asyncio.sleep(5)  # Wait for 5 seconds before checking again
-
-                # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
-
-                # Esperar até que haja entregadores disponíveis
-                # while not entregadores_disponiveis:
-                    # print("No return deliveryman available. Waiting...")
-                    # await asyncio.sleep(5)  
-                    # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
-
-                # Selecionar aleatoriamente um entregador disponível
-                # deliveryman = random.choice(entregadores_disponiveis).getAgent()
 
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
@@ -146,9 +123,6 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                 # Extract relevant information from the delivery object
                 id = delivery.getId()
-                client_jid = delivery.getAgent()
-                loc = delivery.getPosition()
-                weight = delivery.getWeight()
 
                 # Remove the delivered product from the pending deliveries list
                 del self.agent.products_to_be_delivered[id]
@@ -160,19 +134,18 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 
-                for p in delivery:
-                    print(p)
-
                 # # Extract relevant information from the delivery object
-                # id = delivery.getId()
-                # client_jid = delivery.getAgent()
-                # loc = delivery.getPosition()
-                # weight = delivery.getWeight()
+                id = delivery.getId()
 
-                # # Remove the delivered product from the pending deliveries list
-                # del self.agent.products_to_be_delivered[id]
+                # Remove the delivered product from the pending deliveries list
+                del self.agent.products_to_be_return[id]
 
                 # # Add the delivered product to the dictionary of delivered products
-                # self.agent.products_delivered[id] = delivery
+                self.agent.products_returned[id] = delivery
+
+                msg = Message(to='stockmanager@laptop-ci4qet97')             
+                msg.body = jsonpickle.encode(delivery)                               
+                msg.set_metadata("performative", "confirmation_refund")
+
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                

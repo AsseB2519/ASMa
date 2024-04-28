@@ -14,11 +14,10 @@ class ClientAgent(agent.Agent):
 
         self.productsBought = {}
 
-        # a = RequestProducts_Behav() 
         a = RequestProducts_Behav(period=50)
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
-        c = Return_Behav(period=50)
+        c = Return_Behav(period=10)
         self.add_behaviour(c)
 
