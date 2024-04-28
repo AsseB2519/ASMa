@@ -43,6 +43,9 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
         #             f"\t - Client with most deliveries: {best_client} with {max_deliveries} deliveries\n"
         #             f"\t - Client with most returns: {worst_client} with {max_returns} deliveries")
 
+        purchase_count = sum(1 for deliveryman in self.agent.deliveryman_subscribed if deliveryman.getType() == "Purchase" and deliveryman.isAvailable())
+        return_count = sum(1 for deliveryman in self.agent.deliveryman_subscribed if deliveryman.getType() == "Return " and deliveryman.isAvailable())
+
         if total_to_be_delivered or total_delivered or total_to_be_returned or total_returned or max_deliveries or max_returns:
             output = "Stats DeliverymanManager:\n"
             if total_to_be_delivered:
@@ -57,5 +60,8 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
                 output += f"\t - Client with most deliveries: {best_client} with {max_deliveries} deliveries\n"
             if max_returns > 0:  # Assumes max_returns is an integer count
                 output += f"\t - Client with most returns: {worst_client} with {max_returns} returns\n"
-
+            if purchase_count > 0:
+                output += f"\t - Available Purchase Deliveryman: {purchase_count}"
+            if return_count > 0:
+                output += f"\t - Available Purchase Deliveryman: {return_count}"
             print(output)

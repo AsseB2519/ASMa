@@ -16,6 +16,7 @@ MAX_CLIENTS = 3  # limit number of clients
 
 if __name__ == '__main__':
 
+    print("PROZIS\n")
     config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
     config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
 

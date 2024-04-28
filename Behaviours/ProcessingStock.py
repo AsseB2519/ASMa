@@ -93,6 +93,14 @@ class ProcessingStock_Behav(CyclicBehaviour):
                                 product.set_quantity(new_quantity)
                                 # break                       
 
+                    for product_id, quantity in lista_compras:
+                        if product_id in self.agent.productsBought:
+                            # If the product ID already exists, add the quantity
+                            self.agent.productsBought[product_id] += quantity
+                        else:
+                            # If the product ID does not exist, create a new entry with this quantity
+                            self.agent.productsBought[product_id] = quantity
+
                     # Send confirmation to the delivery manager
                     confirmation_msg = Message(to=self.agent.get("deliveryman_contact"))
                     confirmation_msg.body = jsonpickle.encode(request)
@@ -103,6 +111,14 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 
             elif performative == "return":
                     request = jsonpickle.decode(msg.body)
+                    lista_compras = request.getProducts()
+
+                    for product_id, quantity in lista_compras:
+                        if product_id in self.agent.productsBought:
+                            self.agent.productsBought[product_id] -= quantity
+                            # Check if the remaining quantity is zero or less; if so, delete the key
+                            if self.agent.productsBought[product_id] <= 0:
+                                del self.agent.productsBought[product_id]
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))       
                     msg.body = jsonpickle.encode(request)                         
@@ -120,6 +136,14 @@ class ProcessingStock_Behav(CyclicBehaviour):
                         if product.get_product_id() == product_id:
                             new_quantity = product.get_quantity() - decrement
                             product.set_quantity(new_quantity)
+
+                for product_id, quantity in lista_compras:
+                    if product_id in self.agent.productsBought:
+                        # If the product ID already exists, add the quantity
+                        self.agent.productsBought[product_id] += quantity
+                    else:
+                        # If the product ID does not exist, create a new entry with this quantity
+                        self.agent.productsBought[product_id] = quantity
 
                 msg = Message(to=self.agent.get("deliveryman_contact"))       
                 msg.body = jsonpickle.encode(accept_proposal)                         
