@@ -1,7 +1,7 @@
 import random 
 from spade import agent
 
-from Behaviours.Register import Register_Behav
+from Behaviours.RegisterDelivery import RegisterDelivery_Behav
 from Behaviours.Transport import Transport_Behav
 from Classes.Position import Position
 import config
@@ -26,7 +26,7 @@ class DeliverymanAgent(agent.Agent):
         
         print("Agent {}".format(str(self.jid)) + " starting...")
 
-        a = Register_Behav()
+        a = RegisterDelivery_Behav()
         self.add_behaviour(a)
         b = Transport_Behav()
         self.add_behaviour(b)

@@ -30,5 +30,5 @@ class DeliverymanManagerAgent(agent.Agent):
         a = ProcessingDelivery_Behav()
         self.add_behaviour(a)
 
-        b = StatsDeliveryman_Behav(period=10)
+        b = StatsDeliveryman_Behav(period= 60)
         self.add_behaviour(b)

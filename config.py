@@ -1,6 +1,9 @@
 # Initialize the variables; they can be set dynamically later
-WAREHOUSE_X = None
-WAREHOUSE_Y = None
+WAREHOUSE_X = 0
+WAREHOUSE_Y = 0
+
+SUPPLIER_X = 10
+SUPPLIER_Y = 10
 
 def get_integer_input(prompt):
     while True:

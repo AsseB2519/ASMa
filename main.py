@@ -12,13 +12,25 @@ XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
 MAX_DELIVERYMAN = 2  # limit number of deliveryman
-MAX_CLIENTS = 3  # limit number of clients
+MAX_CLIENTS = 1  # limit number of clients
 
 if __name__ == '__main__':
 
-    print("PROZIS\n")
-    config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
-    config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
+    print("""
+                    ooooooooo.   ooooooooo.     .oooooo.    oooooooooooo ooooo  .oooooo..o 
+                    `888   `Y88. `888   `Y88.  d8P'  `Y8b  d'""""""d888' `888' d8P'    `Y8 
+                    888   .d88'  888   .d88' 888      888       .888P    888  Y88bo.      
+                    888ooo88P'   888ooo88P'  888      888      d888'     888   `"Y8888o.  
+                    888          888`88b.    888      888    .888P       888       `"Y88b 
+                    888          888  `88b.  `88b    d88'   d888'    .P  888  oo     .d8P 
+                    o888o        o888o  o888o  `Y8bood8P'  .8888888888P  o888o 8""88888P'  
+    """)
+    
+    # config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
+    # config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
+
+    # config.SUPPLIER_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
+    # config.SUPPLIER_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
 
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)

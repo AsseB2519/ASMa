@@ -40,21 +40,32 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 delivery_id = self.delivery_id_counter
 
                 delivery = Delivery(delivery_id, client_jid, loc, total_weight)
-                
-                # Filtrar os entregadores disponíveis
-                entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
 
-                # Esperar até que haja entregadores disponíveis
-                while not entregadores_disponiveis:
-                    print("No purchase deliveryman available. Waiting...")
-                    await asyncio.sleep(5)  # Espera por 1 segundo antes de verificar novamente
+                # Check and wait for available purchase deliverymen
+                while True:
+                    # Filter available deliverymen of type 'Purchase'
                     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
 
+                    if entregadores_disponiveis:
+                        break  # Exit the loop if there are available deliverymen
+                    else:
+                        print("No purchase deliveryman available. Waiting...")
+                        await asyncio.sleep(5)  # Wait for 5 seconds before checking again
+
+                # # Filtrar os entregadores disponíveis
+                # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
+
+                # # Esperar até que haja entregadores disponíveis
+                # while not entregadores_disponiveis:
+                #     print("No purchase deliveryman available. Waiting...")
+                #     await asyncio.sleep(5)  # Espera por 1 segundo antes de verificar novamente
+                #     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Purchase"]
+
                 # Selecionar aleatoriamente um entregador disponível
-                deliveryman = random.choice(entregadores_disponiveis).getAgent()
+                # deliveryman = random.choice(entregadores_disponiveis).getAgent()
 
                 # Selecionar o primeiro entregador disponível
-                # deliveryman = entregadores_disponiveis[0].getAgents()
+                deliveryman = entregadores_disponiveis[0].getAgent()
 
                 self.agent.products_to_be_delivered[delivery_id] = delivery
 
@@ -89,19 +100,30 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                 delivery = Delivery(delivery_id, client_jid, loc, total_weight)
 
-                entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
-
-                # Esperar até que haja entregadores disponíveis
-                while not entregadores_disponiveis:
-                    print("No return deliveryman available. Waiting...")
-                    await asyncio.sleep(5)  
+                # Check and wait for available purchase deliverymen
+                while True:
+                    # Filter available deliverymen of type 'Purchase'
                     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
 
+                    if entregadores_disponiveis:
+                        break  # Exit the loop if there are available deliverymen
+                    else:
+                        print("No purchase deliveryman available. Waiting...")
+                        await asyncio.sleep(5)  # Wait for 5 seconds before checking again
+
+                # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
+
+                # Esperar até que haja entregadores disponíveis
+                # while not entregadores_disponiveis:
+                    # print("No return deliveryman available. Waiting...")
+                    # await asyncio.sleep(5)  
+                    # entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
+
                 # Selecionar aleatoriamente um entregador disponível
-                deliveryman = random.choice(entregadores_disponiveis).getAgent()
+                # deliveryman = random.choice(entregadores_disponiveis).getAgent()
 
                 # Selecionar o primeiro entregador disponível
-                # deliveryman = entregadores_disponiveis[0].getAgents()
+                deliveryman = entregadores_disponiveis[0].getAgent()
 
                 self.agent.products_to_be_return[delivery_id] = delivery
 
@@ -118,8 +140,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                 print("Agent {}:".format(str(self.agent.jid)) + " DeliverymanManager Agent subscribed Deliveryman Agent {}".format(str(msg.sender)))
 
-            elif performative == "confirmation":
-                print("Chegou Manager")
+            elif performative == "confirmation_delivery":
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 
@@ -135,5 +156,23 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Add the delivered product to the dictionary of delivered products
                 self.agent.products_delivered[id] = delivery
 
+            elif performative == "confirmation_refund":
+                # Decode the delivery information from the message body
+                delivery = jsonpickle.decode(msg.body)
+
+                for p in delivery:
+                    print(p)
+
+                # # Extract relevant information from the delivery object
+                # id = delivery.getId()
+                # client_jid = delivery.getAgent()
+                # loc = delivery.getPosition()
+                # weight = delivery.getWeight()
+
+                # # Remove the delivered product from the pending deliveries list
+                # del self.agent.products_to_be_delivered[id]
+
+                # # Add the delivered product to the dictionary of delivered products
+                # self.agent.products_delivered[id] = delivery
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                

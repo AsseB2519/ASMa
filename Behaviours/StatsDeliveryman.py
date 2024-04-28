@@ -63,5 +63,5 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
             if purchase_count > 0:
                 output += f"\t - Available Purchase Deliveryman: {purchase_count}"
             if return_count > 0:
-                output += f"\t - Available Purchase Deliveryman: {return_count}"
+                output += f"\t - Available Return Deliveryman: {return_count}"
             print(output)

@@ -92,5 +92,9 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
             elif performative == "delivery": 
                 print("Agent {}:".format(str(self.agent.jid)) + " Client Agent received the package from Deliveryman Agent {}".format(str(msg.sender)))
+
+            elif performative == "refund": 
+                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent handed over the refund products to Deliveryman Agent {}".format(str(msg.sender)))    
+
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")   

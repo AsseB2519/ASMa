@@ -33,7 +33,7 @@ class StockManagerAgent(agent.Agent):
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
 
-        b = StatsStock_Behav(period = 10)
+        b = StatsStock_Behav(period = 60)
         self.add_behaviour(b)
 
         # c = RequestSupply_Behav(period=60)
