@@ -48,7 +48,6 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 # for p in lista_compras:
                 #     print(p)
                     
-                # Alterar isto depois para o momento da entrega
                 for product, quantity in lista_compras:
                     if product in self.agent.productsBought:
                         self.agent.productsBought[product] += quantity
@@ -92,8 +91,6 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     await self.send(msg)
 
             elif performative == "delivery": 
-                # Não sei o que fazer
-                print("Chegou")
-
-
-            else: print("Error3")
+                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent received the package from Deliveryman Agent {}".format(str(msg.sender)))
+            else:
+                print(f"Agent {self.agent.jid}: Message not understood!")   

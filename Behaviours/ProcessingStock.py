@@ -96,19 +96,21 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     # Send confirmation to the delivery manager
                     confirmation_msg = Message(to=self.agent.get("deliveryman_contact"))
                     confirmation_msg.body = jsonpickle.encode(request)
-                    confirmation_msg.set_metadata("performative", "inform")
+                    confirmation_msg.set_metadata("performative", "purchase")
 
                     print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed purchase delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                     await self.send(confirmation_msg)
                 
             elif performative == "return":
+                    request = jsonpickle.decode(msg.body)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))       
                     msg.body = jsonpickle.encode(request)                         
-                    msg.set_metadata("performative", "request")                   
+                    msg.set_metadata("performative", "return")                   
         
                     print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed return delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                     await self.send(msg)
+                    
             elif performative == "accept_proposal":
                 accept_proposal = jsonpickle.decode(msg.body)
                 lista_compras = accept_proposal.getProducts()
@@ -121,7 +123,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
 
                 msg = Message(to=self.agent.get("deliveryman_contact"))       
                 msg.body = jsonpickle.encode(accept_proposal)                         
-                msg.set_metadata("performative", "request") 
+                msg.set_metadata("performative", "purchase") 
 
                 print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman after Negociation to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                 await self.send(msg)
@@ -129,10 +131,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
             # elif performative == "reject_proposal":
                 # print("reject_proposal")
 
-            # self.kill()  # kill the Processing_Behav 
-        else:
-            print("Agent {}:".format(str(self.agent.jid)) + "Did not received any message after 10 seconds")
+            else:
+                print(f"Agent {self.agent.jid}: Message not understood!")     
+        # else:
+        #     print("Agent {}:".format(str(self.agent.jid)) + "Did not received any message after 10 seconds")
 
-    async def on_end(self): 
-        await self.agent.stop()
 

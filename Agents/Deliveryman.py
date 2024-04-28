@@ -21,8 +21,7 @@ class DeliverymanAgent(agent.Agent):
         self.vehicle_type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]
-        # probabilities = [0.75, 0.25] 
-        probabilities = [1, 0] 
+        probabilities = [0.75, 0.25] 
         self.type = random.choices(actions, weights=probabilities)[0]
         
         print("Agent {}".format(str(self.jid)) + " starting...")

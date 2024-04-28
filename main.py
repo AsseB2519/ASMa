@@ -11,7 +11,7 @@ from Agents.Supplier import SupplierAgent
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
-MAX_DELIVERYMAN = 1  # limit number of deliveryman
+MAX_DELIVERYMAN = 2  # limit number of deliveryman
 MAX_CLIENTS = 3  # limit number of clients
 
 if __name__ == '__main__':

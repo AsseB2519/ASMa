@@ -7,6 +7,7 @@ class DeliverymanManagerAgent(agent.Agent):
 
     deliveryman_subscribed = []
 
+    products_to_be_return = {}
     products_to_be_delivered = {}
     products_delivered = {}
 

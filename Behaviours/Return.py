@@ -53,9 +53,9 @@ class Return_Behav (PeriodicBehaviour):
             print("Agent {}:".format(str(self.agent.jid)) + " Client Agent returned Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
             await self.send(msg)
 
-            print(f"Products returned: {return_list}")
-        else:
-            print("No products to return.")
+            # print(f"Products returned: {return_list}")
+        # else:
+        #     print("No products to return.")
 
 
         

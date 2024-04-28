@@ -19,9 +19,6 @@ class ClientAgent(agent.Agent):
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
-
-        # await asyncio.sleep(3) 
-        
-        # c = Return_Behav(period=40)
-        # self.add_behaviour(c)
+        c = Return_Behav(period=10)
+        self.add_behaviour(c)
 

@@ -10,7 +10,7 @@ class Transport_Behav(CyclicBehaviour):
         msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
         if msg:
             performative = msg.get_metadata("performative")
-            if performative == "inform":
+            if performative == "purchase":
                 # self.agent.available = False
 
                 inform = jsonpickle.decode(msg.body)
@@ -34,14 +34,14 @@ class Transport_Behav(CyclicBehaviour):
                         y_ori = self.agent.position.getY()
                         distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                        print(distance)
+                        # print(distance)
                         await asyncio.sleep(distance/10) 
 
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
 
                         msg = Message(to=client_jid)
-                        msg.body = jsonpickle.encode("Encomenda")
+                        msg.body = jsonpickle.encode(inform) 
                         msg.set_metadata("performative", "delivery")
 
                         print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
@@ -64,8 +64,11 @@ class Transport_Behav(CyclicBehaviour):
                 else:
                     print(f"Agent {self.agent.jid}: Current total weight {total_weight}kg does not meet the minimum threshold of {threshold_weight}kg. Waiting for more packages.")
                     # self.agent.available = True  # Still available for receiving more packages
+            
+            elif performative == "return":
+                print("to be done")
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
 
-        else:
-            print(f"Agent {self.agent.jid}: Did not receive any message after 10 seconds")
+        # else:
+        #     print(f"Agent {self.agent.jid}: Did not receive any message after 10 seconds")

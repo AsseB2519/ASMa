@@ -18,5 +18,9 @@ class Register_Behav(OneShotBehaviour):
         msg.body = jsonpickle.encode(register)       
         msg.set_metadata("performative", "subscribe")                   
 
-        print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent subscribing to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+        if self.agent.type == "Purchase":
+            print("Agent {}:".format(str(self.agent.jid)) + " PurchaseDeliveryman Agent subscribing to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+        elif self.agent.type == "Return":
+            print("Agent {}:".format(str(self.agent.jid)) + " ReturnDeliveryman Agent subscribing to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+
         await self.send(msg)

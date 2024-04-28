@@ -12,3 +12,6 @@ class ProcessingStock_Behav(CyclicBehaviour):
             if performative == "request":
                 if msg.body == "Request Supply":
                     print("2")
+
+            else:
+                print(f"Agent {self.agent.jid}: Message not understood!")                       
