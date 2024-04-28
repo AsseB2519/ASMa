@@ -2,12 +2,14 @@ import csv
 from spade import agent
 
 from Behaviours.ProcessingDelivery import ProcessingDelivery_Behav
+from Behaviours.StatsDeliveryman import StatsDeliveryman_Behav
 
 class DeliverymanManagerAgent(agent.Agent):
 
     deliveryman_subscribed = []
 
     products_to_be_return = {}
+    products_returned = {}
     products_to_be_delivered = {}
     products_delivered = {}
 
@@ -27,3 +29,6 @@ class DeliverymanManagerAgent(agent.Agent):
 
         a = ProcessingDelivery_Behav()
         self.add_behaviour(a)
+
+        b = StatsDeliveryman_Behav(period=10)
+        self.add_behaviour(b)

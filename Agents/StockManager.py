@@ -1,9 +1,8 @@
 import csv
 from spade import agent
-from Behaviours.ProcessingStock import ProcessingStock_Behav
 
+from Behaviours.ProcessingStock import ProcessingStock_Behav
 from Behaviours.RequestSupply import RequestSupply_Behav
-from Behaviours.Stats import Stats_Behav
 from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
