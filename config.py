@@ -2,8 +2,8 @@
 WAREHOUSE_X = 0
 WAREHOUSE_Y = 0
 
-SUPPLIER_X = 10
-SUPPLIER_Y = 10
+SUPPLIER_X = 20
+SUPPLIER_Y = 20
 
 def get_integer_input(prompt):
     while True:

@@ -9,7 +9,6 @@ class TransportSupply_Behav(CyclicBehaviour):
     async def run(self):
         msg = await self.receive(timeout=10) 
         if msg:
-            # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
             stockmanager = str(msg.sender)
             if performative == "supply":
@@ -24,16 +23,24 @@ class TransportSupply_Behav(CyclicBehaviour):
                 distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
                 time.sleep(distance/10)
-                print("Trip 1")
+                # print("Trip 1")
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Supplier Agent got the products from SupplierWarehouse ")
+
+                # Random se não tiver sempre máximo stock
+                for p in supply:
+                    quantidade_max = p.get_max_quantity()
+                    p.set_quantity(quantidade_max)
                 
                 time.sleep(distance/10)
-                print("Trip 2")
+                # print("Trip 2")
 
-                msg = Message(to=str(msg.make_reply)) # stockmanager
+                msg = Message(to=str(stockmanager))
                 msg.body = jsonpickle.encode(supply)          
                 msg.set_metadata("performative", "supply")
+
+                # print("Agent {}:".format(str(self.agent.jid)) + " Supplier Agent supplied the stock of StockManager Agent " + str(stockmanager))
+                await self.send(msg)
             
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                       

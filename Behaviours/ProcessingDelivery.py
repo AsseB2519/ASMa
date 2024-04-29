@@ -148,5 +148,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 msg.body = jsonpickle.encode(delivery)                               
                 msg.set_metadata("performative", "confirmation_refund")
 
+                await self.send(msg)
+
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                

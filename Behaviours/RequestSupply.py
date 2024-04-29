@@ -4,7 +4,7 @@ from spade.message import Message
 
 class RequestSupply_Behav(PeriodicBehaviour):
     async def run(self):
-        threshold = 0.5  # 50% threshold
+        threshold = 0.25  # 25% threshold
         low_products = [product for product in self.agent.products if product.get_quantity() < threshold * product.get_max_quantity()]
 
         if low_products:

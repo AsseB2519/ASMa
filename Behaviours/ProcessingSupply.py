@@ -11,13 +11,8 @@ class ProcessingSupply_Behav(CyclicBehaviour):
             if performative == "supply":
                 supply = jsonpickle.decode(msg.body)
 
-                print("Chegou aqui")
-
                 for p in supply:
                     for products in self.agent.products:
                         if p.get_product_id() == products.get_product_id():
                             quantity_new = p.get_quantity()
-                            quantity_atual = products.get_quantity()
-                            products.set_quantity(quantity_atual + quantity_new)
-
-                print(self.agent.products[0])
+                            products.set_quantity(quantity_new)
