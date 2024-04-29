@@ -1,3 +1,4 @@
+import random
 import jsonpickle
 import config
 import time
@@ -27,10 +28,25 @@ class TransportSupply_Behav(CyclicBehaviour):
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Supplier Agent got the products from SupplierWarehouse ")
 
-                # Random se não tiver sempre máximo stock
+                # for p in supply:
+                #     quantidade_max = p.get_max_quantity()
+                #     p.set_quantity(quantidade_max)
+
+                # Modify the quantity with a higher probability of being the maximum
                 for p in supply:
-                    quantidade_max = p.get_max_quantity()
-                    p.set_quantity(quantidade_max)
+                    current_quantity = p.get_quantity()
+                    max_quantity = p.get_max_quantity()
+                    
+                    # Decide whether to set to max quantity with a higher probability
+                    if random.random() < 0.8:  # 80% chance to set to max quantity
+                        new_quantity = max_quantity
+                    else:
+                        # 20% chance to set to a random quantity between current and max
+                        new_quantity = random.randint(current_quantity, max_quantity)
+                    
+                    p.set_quantity(new_quantity)
+                    print(current_quantity)
+                    print(new_quantity)
                 
                 time.sleep(distance/10)
                 # print("Trip 2")
