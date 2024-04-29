@@ -23,17 +23,12 @@ class ProcessingStock_Behav(CyclicBehaviour):
                         if quantidade > 0:
                             new_products.append(p)
 
-                    # for p in new_products:
-                    #     print(p)                        
-
                     # Construct a list of dictionaries containing information for each available product
                     message_body = []
                     for product in new_products:
                         produto = Product(product.get_product_id(), product.get_name(), product.get_category(), product.get_price())
                         message_body.append(produto)
                     
-                    # print(message_body)
-
                     msg = Message(to=client) # msg.make_reply()
                     msg.body = jsonpickle.encode(message_body) # self.agent.products
                     msg.set_metadata("performative", "inform")           
@@ -44,9 +39,6 @@ class ProcessingStock_Behav(CyclicBehaviour):
             elif performative == "purchase":
                 request = jsonpickle.decode(msg.body)
 
-                # if isinstance(request, Purchase):
-                # client_jid = request.getAgent()
-                # loc = request.getInit()
                 lista_compras = request.getProducts()
 
                 # Dictionary to store the proposed quantities
@@ -64,18 +56,11 @@ class ProcessingStock_Behav(CyclicBehaviour):
                                 # Não há stock suficiente, propor quantidade disponível
                                 proposed_product = Product_Manager(product.get_product_id(), product.get_name(), product.get_category(), available_quantity, product.get_price())
                                 # print(f"Not enough stock for product {product_id}, available: {available_quantity}")
-                            # else:
-                                # Stock suficiente, propor quantidade solicitada
-                                # proposed_product = Product_Manager(product.get_product_id(), product.get_name(), product.get_category(), requested_quantity, product.get_price())
                                 proposed_products.append(proposed_product)
-                            # break
                     if not found:
-                        # can_fulfill_order = False
                         print(f"Product {product_id} not found")
             
                 if not can_fulfill_order:
-
-                    # purchase = Purchase(str(client_jid), loc, proposed_products)
 
                     negotiation_msg = Message(to=client)
                     negotiation_msg.body = jsonpickle.encode(proposed_products)
@@ -91,7 +76,6 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             if product.get_product_id() == product_id:
                                 new_quantity = product.get_quantity() - decrement
                                 product.set_quantity(new_quantity)
-                                # break                       
 
                     for product_id, quantity in lista_compras:
                         if product_id in self.agent.productsBought:
@@ -111,21 +95,14 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 
             elif performative == "return":
                     request = jsonpickle.decode(msg.body)
-                    lista_compras = request.getProducts()
+                    # lista_compras = request.getProducts()
 
-                    for product_id, quantity in lista_compras:
-                        if product_id in self.agent.productsBought:
-                            self.agent.productsBought[product_id] -= quantity
-                            # Check if the remaining quantity is zero or less; if so, delete the key
-                            if self.agent.productsBought[product_id] <= 0:
-                                del self.agent.productsBought[product_id]
-
-                    # Adicionar probabilidade para ver o que está em estado ou não por Categoria
-                    for product_id, quantity in lista_compras:
-                        for product in self.agent.products:
-                            if product.get_product_id() == product_id:
-                                q = product.get_quantity()
-                                product.set_quantity(q + quantity)
+                    # for product_id, quantity in lista_compras:
+                    #     if product_id in self.agent.productsBought:
+                    #         self.agent.productsBought[product_id] -= quantity
+                    #         # Check if the remaining quantity is zero or less; if so, delete the key
+                    #         if self.agent.productsBought[product_id] <= 0:
+                    #             del self.agent.productsBought[product_id]
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))       
                     msg.body = jsonpickle.encode(request)                         
@@ -163,7 +140,42 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 # print("reject_proposal")
             
             elif performative == "confirmation_refund":
+                ret = jsonpickle.decode(msg.body)
                 print("a implementar")
+
+                print(ret)
+
+                for product_id, quantity in lista_compras:
+                    if product_id in self.agent.productsBought:
+                        self.agent.productsBought[product_id] -= quantity
+                        # Check if the remaining quantity is zero or less; if so, delete the key
+                        if self.agent.productsBought[product_id] <= 0:
+                            del self.agent.productsBought[product_id]
+
+                client_jid = ret.getAgent()
+                loc = ret.getInit()
+                products = ret.getProducts()
+                # Adicionar probabilidade para ver o que está em estado ou não por Categoria
+                # for product_id, quantity in lista_compras:
+                #     for product in self.agent.products:
+                #         if product.get_product_id() == product_id:
+                #             q = product.get_quantity()
+                #             product.set_quantity(q + quantity)
+                
+            # elif performative == "supply":
+            #     supply = jsonpickle.decode(msg.body)
+
+            #     print("Chegou aqui")
+
+            #     for p in supply:
+            #         for products in self.agent.products:
+            #             if p.get_product_id() == products.get_product_id():
+            #                 quantity_new = p.get_quantity()
+            #                 quantity_atual = products.get_quantity()
+            #                 products.set_quantity(quantity_atual + quantity_new)
+
+            #     print(self.agent.products[0])
+
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     
         # else:

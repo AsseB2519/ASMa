@@ -14,7 +14,7 @@ class DeliverymanManagerAgent(agent.Agent):
     products_delivered = {}
 
     async def setup(self):
-        print("Agent {}".format(str(self.jid)) + " starting...")
+        # print("Agent {}".format(str(self.jid)) + " starting...")
 
         self.products = {}
         

@@ -2,6 +2,7 @@ import csv
 from spade import agent
 
 from Behaviours.ProcessingStock import ProcessingStock_Behav
+from Behaviours.ProcessingSupply import ProcessingSupply_Behav
 from Behaviours.RequestSupply import RequestSupply_Behav
 from Behaviours.StatsStockManager import StatsStock_Behav
 from Classes.Product_Manager import Product_Manager
@@ -9,8 +10,8 @@ from Classes.Product_Manager import Product_Manager
 class StockManagerAgent(agent.Agent):
 
     async def setup(self):
-        print("Agent {}".format(str(self.jid)) + " starting...")
-        
+        # print("Agent {}".format(str(self.jid)) + " starting...")
+        self.productsReturned = {}
         self.productsBought = {}
 
         # Initialize an empty list to store products
@@ -33,10 +34,15 @@ class StockManagerAgent(agent.Agent):
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
 
+        c = RequestSupply_Behav(period= 20)
+        self.add_behaviour(c)
+
+        d = ProcessingSupply_Behav()
+        self.add_behaviour(d)
+
         b = StatsStock_Behav(period = 60)
         self.add_behaviour(b)
 
-        # c = RequestSupply_Behav(period=60)
-        # self.add_behaviour(c)
+
 
         

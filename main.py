@@ -16,7 +16,11 @@ MAX_CLIENTS = 1  # limit number of clients
 
 if __name__ == '__main__':
 
-    print("""
+    # ANSI escape code for red text
+    red_start = "\033[91m"
+    red_end = "\033[0m"
+
+    print(red_start + """
                     ooooooooo.   ooooooooo.     .oooooo.    oooooooooooo ooooo  .oooooo..o 
                     `888   `Y88. `888   `Y88.  d8P'  `Y8b  d'""""""d888' `888' d8P'    `Y8 
                     888   .d88'  888   .d88' 888      888       .888P    888  Y88bo.      
@@ -24,7 +28,8 @@ if __name__ == '__main__':
                     888          888`88b.    888      888    .888P       888       `"Y88b 
                     888          888  `88b.  `88b    d88'   d888'    .P  888  oo     .d8P 
                     o888o        o888o  o888o  `Y8bood8P'  .8888888888P  o888o 8""88888P'  
-    """)
+    """ + red_end)
+
     
     # config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
     # config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")

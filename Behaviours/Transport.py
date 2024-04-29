@@ -1,7 +1,6 @@
 import math
 import time
 import config
-import asyncio
 from spade.message import Message
 from spade.behaviour import CyclicBehaviour
 import jsonpickle
@@ -25,20 +24,19 @@ class Transport_Behav(CyclicBehaviour):
                 y_ori = self.agent.position.getY()
                 distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                print("Trip 1")
+                # print("Trip 1")
                 trip = distance / 10
-                time.sleep(trip)
-                # await asyncio.sleep(trip) 
+                time.sleep(1)
                 
                 self.agent.position.setX(x_dest)
                 self.agent.position.setY(y_dest)
 
-                msg = Message(to=client_jid)
-                msg.body = "Delivery"
-                msg.set_metadata("performative", "delivery")
+                # msg = Message(to=client_jid)
+                # msg.body = "Delivery"
+                # msg.set_metadata("performative", "delivery")
 
                 print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
-                await self.send(msg)
+                # await self.send(msg)
 
                 msg = Message(to=self.agent.get("deliveryman_contact"))
                 msg.body = jsonpickle.encode(purchase)
@@ -47,13 +45,11 @@ class Transport_Behav(CyclicBehaviour):
                 print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(self.agent.get("deliveryman_contact")))
                 await self.send(msg)    
 
-                print("Trip 2")
-                time.sleep(trip)
-                # await asyncio.sleep(distance/10)
+                # print("Trip 2")
+                time.sleep(1)
 
                 self.agent.position.setX(int(config.WAREHOUSE_X))
                 self.agent.position.setY(int(config.WAREHOUSE_Y))
-
                 self.agent.available = True
             
             elif performative == "return":
@@ -70,7 +66,7 @@ class Transport_Behav(CyclicBehaviour):
                 y_ori = self.agent.position.getY()
                 distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                print("Trip 1")
+                # print("Trip 1")
                 trip = distance / 10
                 # time.sleep(trip)
                 time.sleep(1)
@@ -82,10 +78,10 @@ class Transport_Behav(CyclicBehaviour):
                 msg.body = "Refund" 
                 msg.set_metadata("performative", "refund")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
+                # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
                 await self.send(msg)    
 
-                print("Trip 2")
+                # print("Trip 2")
                 # time.sleep(trip)
                 time.sleep(1)
 
@@ -98,7 +94,6 @@ class Transport_Behav(CyclicBehaviour):
 
                 self.agent.position.setX(int(config.WAREHOUSE_X))
                 self.agent.position.setY(int(config.WAREHOUSE_Y))
-
                 self.agent.available = True
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")

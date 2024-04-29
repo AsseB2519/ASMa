@@ -1,5 +1,4 @@
-import asyncio
-import random
+import time
 import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
@@ -50,7 +49,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                         break  # Exit the loop if there are available deliverymen
                     else:
                         print("No purchase deliveryman available. Waiting...")
-                        await asyncio.sleep(5)  # Wait for 5 seconds before checking again
+                        time.sleep(5)  # Wait for 5 seconds before checking again
 
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
@@ -88,16 +87,16 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
 
                 delivery = Delivery(delivery_id, client_jid, loc, total_weight)
 
-                # Check and wait for available purchase deliverymen
+                # Check and wait for available return deliverymen
                 while True:
-                    # Filter available deliverymen of type 'Purchase'
+                    # Filter available deliverymen of type 'Return'
                     entregadores_disponiveis = [entregador for entregador in self.agent.deliveryman_subscribed if entregador.isAvailable() and entregador.getType() == "Return"]
 
                     if entregadores_disponiveis:
                         break  # Exit the loop if there are available deliverymen
                     else:
                         print("No return deliveryman available. Waiting...")
-                        await asyncio.sleep(5)  # Wait for 5 seconds before checking again
+                        time.sleep(5)  # Wait for 5 seconds before checking again
 
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
@@ -115,7 +114,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 deliveryman_register = jsonpickle.decode(msg.body)
                 self.agent.deliveryman_subscribed.append(deliveryman_register)
 
-                print("Agent {}:".format(str(self.agent.jid)) + " DeliverymanManager Agent subscribed Deliveryman Agent {}".format(str(msg.sender)))
+                # print("Agent {}:".format(str(self.agent.jid)) + " DeliverymanManager Agent subscribed Deliveryman Agent {}".format(str(msg.sender)))
 
             elif performative == "confirmation_delivery":
                 # Decode the delivery information from the message body
@@ -133,6 +132,8 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
             elif performative == "confirmation_refund":
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
+
+                print(delivery)
 
                 # # Extract relevant information from the delivery object
                 id = delivery.getId()

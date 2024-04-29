@@ -2,16 +2,22 @@ import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
 
-class ProcessingStock_Behav(CyclicBehaviour):
+class ProcessingSupply_Behav(CyclicBehaviour):
     async def run(self):
         msg = await self.receive(timeout=10) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
-            client = str(msg.sender)
-            if performative == "request":
-                if msg.body == "Request Supply":
-                    print("2")
+            if performative == "supply":
+                supply = jsonpickle.decode(msg.body)
 
-            else:
-                print(f"Agent {self.agent.jid}: Message not understood!")                       
+                print("Chegou aqui")
+
+                for p in supply:
+                    for products in self.agent.products:
+                        if p.get_product_id() == products.get_product_id():
+                            quantity_new = p.get_quantity()
+                            quantity_atual = products.get_quantity()
+                            products.set_quantity(quantity_atual + quantity_new)
+
+                print(self.agent.products[0])
