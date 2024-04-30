@@ -5,17 +5,15 @@ from Behaviours.ProcessingDelivery import ProcessingDelivery_Behav
 from Behaviours.StatsDeliveryman import StatsDeliveryman_Behav
 
 class DeliverymanManagerAgent(agent.Agent):
-
-    deliveryman_subscribed = []
-
-    products_to_be_return = {}
-    products_returned = {}
-    products_to_be_delivered = {}
-    products_delivered = {}
-
     async def setup(self):
         # print("Agent {}".format(str(self.jid)) + " starting...")
 
+        self.deliveryman_subscribed = []
+
+        self.products_to_be_return = {}
+        self.products_returned = {}
+        self.products_to_be_delivered = {}
+        self.products_delivered = {}
         self.products = {}
         
         with open('delivery_products.csv', newline='') as csvfile:
@@ -30,5 +28,5 @@ class DeliverymanManagerAgent(agent.Agent):
         a = ProcessingDelivery_Behav()
         self.add_behaviour(a)
 
-        b = StatsDeliveryman_Behav(period= 60)
+        b = StatsDeliveryman_Behav(period= 10)
         self.add_behaviour(b)

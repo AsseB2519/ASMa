@@ -70,23 +70,6 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 loc = ret.getInit()
                 products = ret.getProducts()
 
-                # Initialize the total weight of the order
-                total_weight = 0
-
-                # Calculate the total weight of the order
-                for product_id, quantity in products:
-                    if product_id in self.agent.products:
-                        weight = self.agent.products[product_id]
-                        total_weight += weight * quantity
-                    else:
-                        print(f"Product ID {product_id} not found in the products list.")
-
-                # print(f"Total weight of the order is: {total_weight} kg")
-                self.delivery_id_counter += 1
-                delivery_id = self.delivery_id_counter
-
-                delivery = Delivery(delivery_id, client_jid, loc, total_weight)
-
                 # Check and wait for available return deliverymen
                 while True:
                     # Filter available deliverymen of type 'Return'
@@ -101,10 +84,13 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
 
-                self.agent.products_to_be_return[delivery_id] = delivery
-
+                if client_jid in self.agent.products_to_be_return:
+                    self.agent.products_to_be_return[client_jid] += products
+                else:
+                    self.agent.products_to_be_return[client_jid] = products
+ 
                 msg = Message(to=deliveryman)             
-                msg.body = jsonpickle.encode(delivery)                               
+                msg.body = jsonpickle.encode(ret)                               
                 msg.set_metadata("performative", "return")
 
                 print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent informed return to Deliveryman Agent {str(deliveryman)}")
@@ -133,18 +119,18 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 
-                print(delivery)
+                # print(delivery)
 
                 # # Extract relevant information from the delivery object
-                id = delivery.getId()
+                # id = delivery.getId()
 
                 # Remove the delivered product from the pending deliveries list
-                del self.agent.products_to_be_return[id]
+                # del self.agent.products_to_be_return[id]
 
                 # # Add the delivered product to the dictionary of delivered products
-                self.agent.products_returned[id] = delivery
+                # self.agent.products_returned[id] = delivery
 
-                msg = Message(to='stockmanager@laptop-ci4qet97')             
+                msg = Message(to=self.agent.get("stock_contact"))   # stockmanager@laptop-ci4qet97          
                 msg.body = jsonpickle.encode(delivery)                               
                 msg.set_metadata("performative", "confirmation_refund")
 

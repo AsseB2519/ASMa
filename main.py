@@ -61,6 +61,8 @@ if __name__ == '__main__':
     res_stockmanager = stockmanager_agent.start(auto_register=True)
     res_stockmanager.result() 
 
+    deliverymanmanager_agent.set('stock_contact', stockmanager_jid)
+
     # Initialize list to save all active Agents in list
     client_list = []
     deliveryman_list = []

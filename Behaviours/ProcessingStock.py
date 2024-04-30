@@ -1,3 +1,4 @@
+import random
 import jsonpickle
 from spade.behaviour import CyclicBehaviour
 from spade.message import Message
@@ -55,7 +56,6 @@ class ProcessingStock_Behav(CyclicBehaviour):
                                 can_fulfill_order = False
                                 # Não há stock suficiente, propor quantidade disponível
                                 proposed_product = Product_Manager(product.get_product_id(), product.get_name(), product.get_category(), available_quantity, product.get_price())
-                                # print(f"Not enough stock for product {product_id}, available: {available_quantity}")
                                 proposed_products.append(proposed_product)
                     if not found:
                         print(f"Product {product_id} not found")
@@ -95,14 +95,6 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 
             elif performative == "return":
                     request = jsonpickle.decode(msg.body)
-                    # lista_compras = request.getProducts()
-
-                    # for product_id, quantity in lista_compras:
-                    #     if product_id in self.agent.productsBought:
-                    #         self.agent.productsBought[product_id] -= quantity
-                    #         # Check if the remaining quantity is zero or less; if so, delete the key
-                    #         if self.agent.productsBought[product_id] <= 0:
-                    #             del self.agent.productsBought[product_id]
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))       
                     msg.body = jsonpickle.encode(request)                         
@@ -136,45 +128,49 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman after Negociation to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                 await self.send(msg)
             
-            # elif performative == "reject_proposal":
-                # print("reject_proposal")
-            
             elif performative == "confirmation_refund":
                 ret = jsonpickle.decode(msg.body)
-                print("a implementar")
 
-                print(ret)
+                client_jid = ret.getAgent()
+                loc = ret.getInit()
+                products = ret.getProducts()
 
-                for product_id, quantity in lista_compras:
+                for product_id, quantity in products:
+                    # Decrease the quantity of bought products
                     if product_id in self.agent.productsBought:
                         self.agent.productsBought[product_id] -= quantity
                         # Check if the remaining quantity is zero or less; if so, delete the key
                         if self.agent.productsBought[product_id] <= 0:
                             del self.agent.productsBought[product_id]
 
-                client_jid = ret.getAgent()
-                loc = ret.getInit()
-                products = ret.getProducts()
-                # Adicionar probabilidade para ver o que está em estado ou não por Categoria
-                # for product_id, quantity in lista_compras:
-                #     for product in self.agent.products:
-                #         if product.get_product_id() == product_id:
-                #             q = product.get_quantity()
-                #             product.set_quantity(q + quantity)
-                
-            # elif performative == "supply":
-            #     supply = jsonpickle.decode(msg.body)
+                    # Add to productsReturned
+                    if product_id in self.agent.productsReturned:
+                        self.agent.productsReturned[product_id] += quantity
+                    else:
+                        self.agent.productsReturned[product_id] = quantity
 
-            #     print("Chegou aqui")
+                # Define the probability for each category
+                category_probabilities = {
+                    "Clothing": 0.8,  # 80% probability
+                    "Fitness Gear": 0.8, # 80% probability
+                    "Health": 0.5,  # 50% probability
+                    "Supplements": 0.5, # 50% probability
+                    "Food": 0.2,  # 20% probability
+                    "Drinks": 0.2 # 20% probability
+                }
 
-            #     for p in supply:
-            #         for products in self.agent.products:
-            #             if p.get_product_id() == products.get_product_id():
-            #                 quantity_new = p.get_quantity()
-            #                 quantity_atual = products.get_quantity()
-            #                 products.set_quantity(quantity_atual + quantity_new)
-
-            #     print(self.agent.products[0])
+                # Modify the loop to include probability checking
+                for product_id, quantity in products:
+                    for product in self.agent.products:
+                        if product.get_product_id() == product_id:
+                            # Get the category of the product
+                            category = product.get_category()
+                            # Get the probability for the category
+                            probability = category_probabilities.get(category, 0.5)  # Default to medium probability if category not listed
+                            # Decide whether to add the product based on the category probability
+                            if random.random() < probability:
+                                q = product.get_quantity()
+                                product.set_quantity(q + quantity)                            
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     

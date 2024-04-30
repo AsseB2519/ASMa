@@ -11,7 +11,10 @@ class Return:
 
     def getInit(self):
         return self.init
-
+    
+    def getPosition(self):
+        return self.init
+    
     def setInit(self, x: int, y: int):
         self.init = Position(x, y)
 

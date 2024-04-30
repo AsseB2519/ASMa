@@ -23,7 +23,7 @@ class DeliverymanAgent(agent.Agent):
         self.vehicle_type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]
-        probabilities = [0.75, 0.25] 
+        probabilities = [0.5, 0.5] 
         self.type = random.choices(actions, weights=probabilities)[0]
         
 

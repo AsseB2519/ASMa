@@ -85,15 +85,16 @@ class Transport_Behav(CyclicBehaviour):
                 # time.sleep(trip)
                 time.sleep(1)
 
+                self.agent.position.setX(int(config.WAREHOUSE_X))
+                self.agent.position.setY(int(config.WAREHOUSE_Y))
+
                 msg = Message(to=self.agent.get("deliveryman_contact"))
                 msg.body = jsonpickle.encode(ret)
                 msg.set_metadata("performative", "confirmation_refund")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliverymanManager Agent {}".format(self.agent.get("deliveryman_contact")))
+                # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliverymanManager Agent {}".format(self.agent.get("deliveryman_contact")))
                 await self.send(msg)   
-
-                self.agent.position.setX(int(config.WAREHOUSE_X))
-                self.agent.position.setY(int(config.WAREHOUSE_Y))
+                
                 self.agent.available = True
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
