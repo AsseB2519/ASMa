@@ -10,7 +10,7 @@ from Classes.Return import Return
 
 class ProcessingStock_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=10) 
+        msg = await self.receive(timeout=20) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
@@ -131,46 +131,47 @@ class ProcessingStock_Behav(CyclicBehaviour):
             elif performative == "confirmation_refund":
                 ret = jsonpickle.decode(msg.body)
 
-                client_jid = ret.getAgent()
-                loc = ret.getInit()
-                products = ret.getProducts()
+                for r in ret: 
+                    client_jid = r.getAgent()
+                    loc = r.getInit()
+                    products = r.getProducts()
 
-                for product_id, quantity in products:
-                    # Decrease the quantity of bought products
-                    if product_id in self.agent.productsBought:
-                        self.agent.productsBought[product_id] -= quantity
-                        # Check if the remaining quantity is zero or less; if so, delete the key
-                        if self.agent.productsBought[product_id] <= 0:
-                            del self.agent.productsBought[product_id]
+                    for product_id, quantity in products:
+                        # Decrease the quantity of bought products
+                        if product_id in self.agent.productsBought:
+                            self.agent.productsBought[product_id] -= quantity
+                            # Check if the remaining quantity is zero or less; if so, delete the key
+                            if self.agent.productsBought[product_id] <= 0:
+                                del self.agent.productsBought[product_id]
 
-                    # Add to productsReturned
-                    if product_id in self.agent.productsReturned:
-                        self.agent.productsReturned[product_id] += quantity
-                    else:
-                        self.agent.productsReturned[product_id] = quantity
+                        # Add to productsReturned
+                        if product_id in self.agent.productsReturned:
+                            self.agent.productsReturned[product_id] += quantity
+                        else:
+                            self.agent.productsReturned[product_id] = quantity
 
-                # Define the probability for each category
-                category_probabilities = {
-                    "Clothing": 0.8,  # 80% probability
-                    "Fitness Gear": 0.8, # 80% probability
-                    "Health": 0.5,  # 50% probability
-                    "Supplements": 0.5, # 50% probability
-                    "Food": 0.2,  # 20% probability
-                    "Drinks": 0.2 # 20% probability
-                }
+                    # Define the probability for each category
+                    category_probabilities = {
+                        "Clothing": 0.8,  # 80% probability
+                        "Fitness Gear": 0.8, # 80% probability
+                        "Health": 0.5,  # 50% probability
+                        "Supplements": 0.5, # 50% probability
+                        "Food": 0.2,  # 20% probability
+                        "Drinks": 0.2 # 20% probability
+                    }
 
-                # Modify the loop to include probability checking
-                for product_id, quantity in products:
-                    for product in self.agent.products:
-                        if product.get_product_id() == product_id:
-                            # Get the category of the product
-                            category = product.get_category()
-                            # Get the probability for the category
-                            probability = category_probabilities.get(category, 0.5)  # Default to medium probability if category not listed
-                            # Decide whether to add the product based on the category probability
-                            if random.random() < probability:
-                                q = product.get_quantity()
-                                product.set_quantity(q + quantity)                            
+                    # Modify the loop to include probability checking
+                    for product_id, quantity in products:
+                        for product in self.agent.products:
+                            if product.get_product_id() == product_id:
+                                # Get the category of the product
+                                category = product.get_category()
+                                # Get the probability for the category
+                                probability = category_probabilities.get(category, 0.5)  # Default to medium probability if category not listed
+                                # Decide whether to add the product based on the category probability
+                                if random.random() < probability:
+                                    q = product.get_quantity()
+                                    product.set_quantity(q + quantity)                            
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     

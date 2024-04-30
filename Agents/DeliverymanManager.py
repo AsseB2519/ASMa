@@ -10,8 +10,8 @@ class DeliverymanManagerAgent(agent.Agent):
 
         self.deliveryman_subscribed = []
 
-        self.products_to_be_return = {}
-        self.products_returned = {}
+        self.products_to_be_return = []
+        self.products_returned = []
         self.products_to_be_delivered = {}
         self.products_delivered = {}
         self.products = {}
@@ -28,5 +28,5 @@ class DeliverymanManagerAgent(agent.Agent):
         a = ProcessingDelivery_Behav()
         self.add_behaviour(a)
 
-        b = StatsDeliveryman_Behav(period= 10)
+        b = StatsDeliveryman_Behav(period=30)
         self.add_behaviour(b)

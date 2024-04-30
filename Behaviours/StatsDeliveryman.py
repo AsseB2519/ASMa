@@ -20,14 +20,16 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
 
         total_products_to_be_returned = 0  # Initialize counter for total products to be returned
         # Loop through the dictionary and sum the quantities of products to be returned
-        for product_list in self.agent.products_returned.values():
+        for product_list in self.agent.products_to_be_return:
+            products = product_list.getProducts()
             for _, quantity in product_list:  # Iterate through each tuple in the list
                 total_products_to_be_returned += quantity  # Increment the total by the quantity
 
         total_products_returned = 0  # Initialize counter for total products to be returned
         # Loop through the lists in the dictionary values
-        for product_list in self.agent.products_returned.values():
-            for _, quantity in product_list:  # Iterate through each tuple in the list
+        for product_list in self.agent.products_returned:
+            products = product_list.getProducts()
+            for _, quantity in products:  # Iterate through each tuple in the list
                 total_products_returned += quantity  # Increment the total by the quantity
 
         # # Calculate the total weight of products to be returned and count deliveries

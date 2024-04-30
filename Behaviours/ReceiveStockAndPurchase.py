@@ -8,7 +8,7 @@ from Classes.Purchase import Purchase
 
 class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
+        msg = await self.receive(timeout=20)  
         if msg:
             performative = msg.get_metadata("performative")
             if performative == "inform":
@@ -18,7 +18,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 # Função para gerar pesos com decaimento exponencial para decidir quantos produtos selecionar
                 def generate_count_weights(n):
-                    decay_factor = 0.5  # Ajuste para controlar a rapidez do decaimento
+                    decay_factor = 0.4  # Ajuste para controlar a rapidez do decaimento
                     weights = [np.exp(-decay_factor * i) for i in range(n)]
                     return weights / np.sum(weights)
 
@@ -33,7 +33,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                 # Função para gerar pesos com decaimento exponencial para a seleção de quantidades
                 def generate_quantity_weights(max_quantity):
-                    decay_factor = 0.5  # Ajuste conforme necessário
+                    decay_factor = 0.4  # Ajuste conforme necessário
                     weights = [np.exp(-decay_factor * i) for i in range(1, max_quantity + 1)]
                     return weights / np.sum(weights)
 
@@ -45,14 +45,13 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     selected_quantity = random.choices(range(1, max_quantity + 1), weights=quantity_weights)[0]
                     lista_compras.append((product.get_product_id(), selected_quantity))
 
-                # for p in lista_compras:
-                #     print(p)
-                    
-                for product, quantity in lista_compras:
-                    if product in self.agent.productsBought:
-                        self.agent.productsBought[product] += quantity
-                    else:
-                        self.agent.productsBought[product] = quantity
+                self.agent.productsBought_notDelivered.append(lista_compras)
+
+                # for product, quantity in lista_compras:
+                #     if product in self.agent.productsBought_notDelivered:
+                #         self.agent.productsBought_notDelivered[product] += quantity
+                #     else:
+                #         self.agent.productsBought_notDelivered[product] = quantity
 
                 purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
@@ -90,11 +89,21 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
 
                     await self.send(msg)
 
-            # elif performative == "delivery": 
-            #     print("Agent {}:".format(str(self.agent.jid)) + " Client Agent received the package from Deliveryman Agent {}".format(str(msg.sender)))
+            elif performative == "delivery": 
+                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent received the package from Deliveryman Agent {}".format(str(msg.sender)))
+
+                lista_compras = self.agent.productsBought_notDelivered[0] 
+
+                for product, quantity in lista_compras:
+                    if product in self.agent.productsBought:
+                        self.agent.productsBought[product] += quantity
+                    else:
+                        self.agent.productsBought[product] = quantity
+
+                self.agent.productsBought_notDelivered.pop(0)
 
             # elif performative == "refund": 
-            #     print("Agent {}:".format(str(self.agent.jid)) + " Client Agent handed over the refund products to Deliveryman Agent {}".format(str(msg.sender)))    
+                # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent handed over the refund products to Deliveryman Agent {}".format(str(msg.sender)))    
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")   

@@ -12,11 +12,12 @@ class ClientAgent(agent.Agent):
         self.position = Position(random.randint(1, 100), random.randint(1, 100))
 
         self.productsBought = {}
+        self.productsBought_notDelivered = []
 
-        a = RequestProducts_Behav(period=50)
+        a = RequestProducts_Behav(period=10)
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
-        c = Return_Behav(period=10)
+        c = Return_Behav(period=30)
         self.add_behaviour(c)
 

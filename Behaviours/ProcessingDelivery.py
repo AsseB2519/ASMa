@@ -11,7 +11,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
     delivery_id_counter = 0
 
     async def run(self):
-        msg = await self.receive(timeout=10) 
+        msg = await self.receive(timeout=20) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
@@ -84,11 +84,8 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Selecionar o primeiro entregador disponível
                 deliveryman = entregadores_disponiveis[0].getAgent()
 
-                if client_jid in self.agent.products_to_be_return:
-                    self.agent.products_to_be_return[client_jid] += products
-                else:
-                    self.agent.products_to_be_return[client_jid] = products
- 
+                self.agent.products_to_be_return.append(ret)
+
                 msg = Message(to=deliveryman)             
                 msg.body = jsonpickle.encode(ret)                               
                 msg.set_metadata("performative", "return")
@@ -106,35 +103,34 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 
-                # Extract relevant information from the delivery object
-                id = delivery.getId()
+                for d in delivery:
+                    client_jid = d.getAgent()
 
-                # Remove the delivered product from the pending deliveries list
-                del self.agent.products_to_be_delivered[id]
+                    # Extract relevant information from the delivery object
+                    id = d.getId()
 
-                # Add the delivered product to the dictionary of delivered products
-                self.agent.products_delivered[id] = delivery
+                    # Remove the delivered product from the pending deliveries list
+                    del self.agent.products_to_be_delivered[id]
+
+                    # Add the delivered product to the dictionary of delivered products
+                    self.agent.products_delivered[id] = d
 
             elif performative == "confirmation_refund":
                 # Decode the delivery information from the message body
                 delivery = jsonpickle.decode(msg.body)
 
-                # print(delivery)
+                for d in delivery:
+                    for ret in self.agent.products_to_be_return:
+                        if d.getAgent() == ret.getAgent():
+                            self.agent.products_to_be_return.remove(ret)
+                            self.agent.products_returned.append(ret)
+                            break
 
-                # # Extract relevant information from the delivery object
-                # id = delivery.getId()
+                    msg = Message(to=self.agent.get("stock_contact"))     
+                    msg.body = jsonpickle.encode(delivery)                               
+                    msg.set_metadata("performative", "confirmation_refund")
 
-                # Remove the delivered product from the pending deliveries list
-                # del self.agent.products_to_be_return[id]
-
-                # # Add the delivered product to the dictionary of delivered products
-                # self.agent.products_returned[id] = delivery
-
-                msg = Message(to=self.agent.get("stock_contact"))   # stockmanager@laptop-ci4qet97          
-                msg.body = jsonpickle.encode(delivery)                               
-                msg.set_metadata("performative", "confirmation_refund")
-
-                await self.send(msg)
+                    await self.send(msg)
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                

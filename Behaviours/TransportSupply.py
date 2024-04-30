@@ -8,7 +8,7 @@ from spade.message import Message
 
 class TransportSupply_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=10) 
+        msg = await self.receive(timeout=20) 
         if msg:
             performative = msg.get_metadata("performative")
             stockmanager = str(msg.sender)

@@ -4,7 +4,7 @@ from spade.message import Message
 
 class ProcessingSupply_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=10) 
+        msg = await self.receive(timeout=20) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")

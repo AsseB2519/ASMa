@@ -18,15 +18,14 @@ class DeliverymanAgent(agent.Agent):
         # self.position = Position(random.randint(1, 100), random.randint(1, 100))
         self.position = Position(int(config.WAREHOUSE_X), int(config.WAREHOUSE_Y))
         
-        categories = ["bike", "car", "truck"]  # List of possible vehicle categories
-        probabilities_cat = [0.5, 0.3, 0.2]
+        categories = ["bike", "motorbike", "car"]  # List of possible vehicle categories
+        probabilities_cat = [0.3, 0.3, 0.3]
         self.vehicle_type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]
         probabilities = [0.5, 0.5] 
         self.type = random.choices(actions, weights=probabilities)[0]
         
-
         a = RegisterDelivery_Behav()
         self.add_behaviour(a)
         b = Transport_Behav()

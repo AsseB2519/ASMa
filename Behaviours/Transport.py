@@ -7,95 +7,115 @@ import jsonpickle
 
 class Transport_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=10)  # wait for a message for 10 seconds
+        msg = await self.receive(timeout=20)
         if msg:
             performative = msg.get_metadata("performative")
             if performative == "purchase":
-                self.agent.available = False
-                
                 purchase = jsonpickle.decode(msg.body)
+                self.agent.deliveries.append(purchase)
 
-                client_jid = purchase.getAgent()
-                loc = purchase.getPosition()
-                x_dest = loc.getX()
-                y_dest = loc.getY()
+                # Calculate the total weight of all scheduled deliveries
+                total_weight = sum([d.getWeight() for d in self.agent.deliveries])
+                max_capacity = {'bike': 10, 'motorbike': 20, 'car': 30}[self.agent.vehicle_type]
+                threshold_weight = 0.7 * max_capacity  # 70% of the maximum capacity
 
-                x_ori = self.agent.position.getX()
-                y_ori = self.agent.position.getY()
-                distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
+                # Only proceed if the total weight reaches at least 80% of the vehicle's capacity
+                if total_weight >= threshold_weight: # and total_weight < max_capacity
+                    self.agent.available = False
+                    for delivery in self.agent.deliveries:
+                        client_jid = delivery.getAgent()
+                        loc = delivery.getPosition()
+                        x_dest = loc.getX()
+                        y_dest = loc.getY()
 
-                # print("Trip 1")
-                trip = distance / 10
-                time.sleep(1)
-                
-                self.agent.position.setX(x_dest)
-                self.agent.position.setY(y_dest)
+                        x_ori = self.agent.position.getX()
+                        y_ori = self.agent.position.getY()
+                        distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                # msg = Message(to=client_jid)
-                # msg.body = "Delivery"
-                # msg.set_metadata("performative", "delivery")
+                        trip = distance / 10
+                        time.sleep(1)
+                        
+                        self.agent.position.setX(x_dest)
+                        self.agent.position.setY(y_dest)
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
-                # await self.send(msg)
+                        msg = Message(to=client_jid)
+                        msg.body = "Delivery"
+                        msg.set_metadata("performative", "delivery")
 
-                msg = Message(to=self.agent.get("deliveryman_contact"))
-                msg.body = jsonpickle.encode(purchase)
-                msg.set_metadata("performative", "confirmation_delivery")
+                        print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
+                        await self.send(msg)
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(self.agent.get("deliveryman_contact")))
-                await self.send(msg)    
+                    msg = Message(to=self.agent.get("deliveryman_contact"))
+                    msg.body = jsonpickle.encode(self.agent.deliveries)
+                    msg.set_metadata("performative", "confirmation_delivery")
 
-                # print("Trip 2")
-                time.sleep(1)
+                    print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(self.agent.get("deliveryman_contact")))
+                    await self.send(msg)    
 
-                self.agent.position.setX(int(config.WAREHOUSE_X))
-                self.agent.position.setY(int(config.WAREHOUSE_Y))
-                self.agent.available = True
-            
+                    # print("Trip 2")
+                    time.sleep(1)
+
+                    self.agent.position.setX(int(config.WAREHOUSE_X))
+                    self.agent.position.setY(int(config.WAREHOUSE_Y))
+                    self.agent.available = True
+                    self.agent.deliveries.clear()
+
+                else: print("Waiting for more purchases! Weight: " + str(total_weight) + " vs Max Capacity: " + str(max_capacity))
+
             elif performative == "return":
-                self.agent.available = False
-                
                 ret = jsonpickle.decode(msg.body)
+                self.agent.deliveries.append(ret)
+                products = ret.getProducts()
 
-                client_jid = ret.getAgent()
-                loc = ret.getPosition()
-                x_dest = loc.getX()
-                y_dest = loc.getY()
+                total_products = 0
+                for delivery in self.agent.deliveries:
+                    products = delivery.getProducts()
+                    for _, quantity in products:
+                        total_products += quantity
 
-                x_ori = self.agent.position.getX()
-                y_ori = self.agent.position.getY()
-                distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
+                if total_products >= 5:
+                    self.agent.available = False
+                    for delivery in self.agent.deliveries:
+                        client_jid = delivery.getAgent()
+                        loc = delivery.getPosition()
+                        x_dest = loc.getX()
+                        y_dest = loc.getY()
 
-                # print("Trip 1")
-                trip = distance / 10
-                # time.sleep(trip)
-                time.sleep(1)
+                        x_ori = self.agent.position.getX()
+                        y_ori = self.agent.position.getY()
+                        distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
-                self.agent.position.setX(x_dest)
-                self.agent.position.setY(y_dest)
+                        trip = distance / 10
+                        time.sleep(1)
+                        
+                        self.agent.position.setX(x_dest)
+                        self.agent.position.setY(y_dest)
 
-                msg = Message(to=client_jid)
-                msg.body = "Refund" 
-                msg.set_metadata("performative", "refund")
+                        # msg = Message(to=client_jid)
+                        # msg.body = "Refund" 
+                        # msg.set_metadata("performative", "refund")
 
-                # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
-                await self.send(msg)    
+                        # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
+                        # await self.send(msg)   
 
-                # print("Trip 2")
-                # time.sleep(trip)
-                time.sleep(1)
+                    time.sleep(1)  
 
-                self.agent.position.setX(int(config.WAREHOUSE_X))
-                self.agent.position.setY(int(config.WAREHOUSE_Y))
+                    self.agent.position.setX(int(config.WAREHOUSE_X))
+                    self.agent.position.setY(int(config.WAREHOUSE_Y))
 
-                msg = Message(to=self.agent.get("deliveryman_contact"))
-                msg.body = jsonpickle.encode(ret)
-                msg.set_metadata("performative", "confirmation_refund")
+                    msg = Message(to=self.agent.get("deliveryman_contact"))
+                    msg.body = jsonpickle.encode(self.agent.deliveries)
+                    msg.set_metadata("performative", "confirmation_refund")
 
-                # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliverymanManager Agent {}".format(self.agent.get("deliveryman_contact")))
-                await self.send(msg)   
+                    # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliverymanManager Agent {}".format(self.agent.get("deliveryman_contact")))
+                    await self.send(msg)   
                 
-                self.agent.available = True
+                    self.agent.available = True 
+
+                    self.agent.deliveries.clear()
+                    
+                else: print("Waiting for more returns!")
+
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
 
