@@ -1,6 +1,10 @@
 import math
 import time
 import config
+from Classes import Location
+from Classes import Node
+from Classes import Graph
+from Classes import Location
 from spade.message import Message
 from spade.behaviour import CyclicBehaviour
 import jsonpickle
@@ -16,7 +20,7 @@ class Transport_Behav(CyclicBehaviour):
 
                 # Calculate the total weight of all scheduled deliveries
                 total_weight = sum([d.getWeight() for d in self.agent.deliveries])
-                max_capacity = {'bike': 10, 'motorbike': 20, 'car': 30}[self.agent.vehicle_type]
+                max_capacity = {'bike': 5, 'motorbike': 10, 'car': 15}[self.agent.vehicle_type]
                 threshold_weight = 0.7 * max_capacity  # 70% of the maximum capacity
 
                 # Only proceed if the total weight reaches at least 80% of the vehicle's capacity
@@ -27,9 +31,27 @@ class Transport_Behav(CyclicBehaviour):
                         loc = delivery.getPosition()
                         x_dest = loc.getX()
                         y_dest = loc.getY()
+                        node_dest = loc.getNode()
 
                         x_ori = self.agent.position.getX()
                         y_ori = self.agent.position.getY()
+                        node_origem = self.agent.position.getNode()
+                        print(node_origem)
+                        location = "Braga"  
+                        neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
+                        grafoAtual = Graph.Grafo(nodes, neigh, edges)
+                        grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
+                        start = grafoAtual.get_node_by_id(node_origem)
+                        dest = grafoAtual.get_node_by_id(node_dest)
+                        grafoAtual.calcula_heuristica_global(dest)
+                        pathAstar = grafoAtual.procura_aStar(start, dest, "car")
+                        caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
+                        custoCarro = pathAstar[1][2]
+                        custoMota = pathAstar[1][1]
+                        print(caminhoCarroMota)
+                        print(custoCarro)
+                        print(custoMota)
+
                         distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
 
                         trip = distance / 10

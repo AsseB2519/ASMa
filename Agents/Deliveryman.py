@@ -16,7 +16,7 @@ class DeliverymanAgent(agent.Agent):
         self.deliveries = []
 
         # self.position = Position(random.randint(1, 100), random.randint(1, 100))
-        self.position = Position(int(config.WAREHOUSE_X), int(config.WAREHOUSE_Y))
+        self.position = Position(int(config.WAREHOUSE_X), int(config.WAREHOUSE_Y), 3142022268)
         
         categories = ["bike", "motorbike", "car"]  # List of possible vehicle categories
         probabilities_cat = [0.3, 0.3, 0.3]

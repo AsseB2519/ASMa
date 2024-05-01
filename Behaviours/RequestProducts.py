@@ -1,5 +1,7 @@
 from spade.behaviour import PeriodicBehaviour
 from spade.message import Message
+import interface
+import asyncio
 
 class RequestProducts_Behav(PeriodicBehaviour):
     async def run(self):

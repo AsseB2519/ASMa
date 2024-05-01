@@ -1,6 +1,7 @@
 import time
 import config
 from spade import quit_spade
+from threading import Thread, Event
 
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
@@ -8,13 +9,30 @@ from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 from Agents.Supplier import SupplierAgent
 
+import tkinter as tk
+from interface import AgentGUI
+
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
 MAX_DELIVERYMAN = 2  # limit number of deliveryman
 MAX_CLIENTS = 1  # limit number of clients
 
+# gui = None
+
+# def run_gui():
+#     global gui
+#     root = tk.Tk()
+#     gui = AgentGUI(root)
+#     gui_ready.set()
+#     root.mainloop()
+
 if __name__ == '__main__':
+    # gui_ready = Event()
+    # gui_thread = Thread(target=run_gui)
+    # gui_thread.start()
+
+    # gui_ready.wait()
 
     # ANSI escape code for red text
     red_start = "\033[91m"
@@ -53,6 +71,8 @@ if __name__ == '__main__':
 
     stockmanager_jid = 'stockmanager@' + XMPP_SERVER
     stockmanager_agent = StockManagerAgent(stockmanager_jid, PASSWORD)
+
+    # stockmanager_agent.set_gui(gui)
 
     stockmanager_agent.set('deliveryman_contact', deliverymanmanager_jid)
     stockmanager_agent.set('supplier_contact', supplier_jid)
@@ -93,6 +113,8 @@ if __name__ == '__main__':
 
         client_jid = 'client{}@'.format(str(i)) + XMPP_SERVER
         client_agent = ClientAgent(client_jid, PASSWORD)
+
+        # client_agent.set_gui(gui)
 
         # store manager_jid in the Client Agent knowledge base
         client_agent.set('stockmanager_contact', stockmanager_jid)

@@ -1,7 +1,8 @@
 class Position:
-    def __init__(self, x:int, y:int):
+    def __init__(self, x:int, y:int, node:int):
         self.x = x
         self.y = y
+        self.node=node
 
     def getX(self):
         return self.x
@@ -15,5 +16,19 @@ class Position:
     def setY(self, y:int):
         self.y = y
 
+    def setNode(self, x:int):
+            self.node = x
+
+    def getNode(self):
+        return self.node        
+
     def toString(self):
         return "Position [X=" + str(self.x) + ", Y=" + str(self.y) + "]"
+
+
+       
+
+    
+
+    
+

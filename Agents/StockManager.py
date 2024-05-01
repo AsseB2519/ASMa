@@ -9,6 +9,9 @@ from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
 
+    def set_gui(self, gui):
+        self.gui = gui
+
     async def setup(self):
         # print("Agent {}".format(str(self.jid)) + " starting...")
         self.productsReturned = {}

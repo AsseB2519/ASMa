@@ -7,9 +7,19 @@ from Classes.Position import Position
 
 class ClientAgent(agent.Agent):
 
+    # def __init__(self, jid, password, gui):
+        # super().__init__(jid, password)
+        # self.gui = gui
+
+    def set_gui(self, gui):
+        self.gui = gui
+
     async def setup(self):
-        # print("Agent {}".format(str(self.jid)) + " starting...")
-        self.position = Position(random.randint(1, 100), random.randint(1, 100))
+        print("Agent {}".format(str(self.jid)) + " starting...")
+        # self.gui.update_log(f"Agent {str(self.jid)} starting...")
+ # self.gui.add_client()
+        
+        self.position = Position(random.randint(1, 100), random.randint(1, 100), 1434791917)
 
         self.productsBought = {}
         self.productsBought_notDelivered = []
