@@ -1,4 +1,6 @@
 import random
+import datetime
+import re
 from spade import agent
 from Behaviours.ReceiveStockAndPurchase import ReceiveStockAndPurchase_Behav
 from Behaviours.RequestProducts import RequestProducts_Behav
@@ -7,25 +9,25 @@ from Classes.Position import Position
 
 class ClientAgent(agent.Agent):
 
-    # def __init__(self, jid, password, gui):
-        # super().__init__(jid, password)
-        # self.gui = gui
-
-    def set_gui(self, gui):
-        self.gui = gui
-
     async def setup(self):
-        print("Agent {}".format(str(self.jid)) + " starting...")
-        # self.gui.update_log(f"Agent {str(self.jid)} starting...")
- # self.gui.add_client()
+        # print("Agent {}".format(str(self.jid)) + " starting...")
         
         self.position = Position(random.randint(1, 100), random.randint(1, 100), 1434791917)
 
         self.productsBought = {}
         self.productsBought_notDelivered = []
 
-        a = RequestProducts_Behav(period=10)
+        match = re.search(r"client(\d+)", str(self.jid))
+        if match:
+            x = int(match.group(1))
+        else:
+            print("No number found in the JID")
+
+        start_at = datetime.datetime.now() + datetime.timedelta(seconds=x)
+        a = RequestProducts_Behav(start_at=start_at)
         self.add_behaviour(a)
+        # a = RequestProducts_Behav(period=10)
+        # self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
         c = Return_Behav(period=30)

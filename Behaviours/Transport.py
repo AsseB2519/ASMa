@@ -36,7 +36,8 @@ class Transport_Behav(CyclicBehaviour):
                         x_ori = self.agent.position.getX()
                         y_ori = self.agent.position.getY()
                         node_origem = self.agent.position.getNode()
-                        print(node_origem)
+                        
+                        # print(node_origem)
                         location = "Braga"  
                         neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
                         grafoAtual = Graph.Grafo(nodes, neigh, edges)
