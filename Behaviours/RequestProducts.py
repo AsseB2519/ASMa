@@ -18,5 +18,6 @@ class RequestProducts_Behav(TimeoutBehaviour):
         msg.body = "Request Products Available"               
         msg.set_metadata("performative", "request")           
         
-        print("Agent {}:".format(str(self.agent.jid)) + " Client Agent requested Product(s) Available to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+        # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent requested Product(s) Available to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+        print("Client {}".format(str(self.agent.jid)) + " request product(s) available to StockManager {}".format(str(self.agent.get("stockmanager_contact"))))
         await self.send(msg)   

@@ -37,12 +37,17 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     weights = [np.exp(-decay_factor * i) for i in range(1, max_quantity + 1)]
                     return weights / np.sum(weights)
 
+                preco = 0
+                tamanho = 0
                 for product in selected_products:
+                    print(product.toString())
                     # max_quantity = 100
                     # max_quantity = product.get_quantity()
-                    max_quantity = random.randint(2, 100)
+                    max_quantity = random.randint(2, 125)
                     quantity_weights = generate_quantity_weights(max_quantity)
                     selected_quantity = random.choices(range(1, max_quantity + 1), weights=quantity_weights)[0]
+                    preco += selected_quantity * product.get_price()
+                    tamanho += selected_quantity
                     lista_compras.append((product.get_product_id(), selected_quantity))
 
                 self.agent.productsBought_notDelivered.append(lista_compras)
@@ -59,7 +64,8 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 msg.body = jsonpickle.encode(purchase)                               
                 msg.set_metadata("performative", "purchase")
 
-                print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+                # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent Purchase Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+                print(f"Client {self.agent.jid} purchase {tamanho} product(s) paying {preco:.2f}€ to StockManager {self.agent.get('stockmanager_contact')}")
                 await self.send(msg)
 
             elif performative == "propose":

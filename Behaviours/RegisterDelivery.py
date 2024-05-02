@@ -14,8 +14,8 @@ class RegisterDelivery_Behav(OneShotBehaviour):
         msg.set_metadata("performative", "subscribe")                   
 
         if self.agent.type == "Purchase":
-            print("Agent {}:".format(str(self.agent.jid)) + " PurchaseDeliveryman Agent subscribed to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+            print("PurchaseDeliveryman {}".format(str(self.agent.jid)) + " subscribes to DeliverymanManager {}".format(str(self.agent.get("deliveryman_contact"))))
         elif self.agent.type == "Return":
-            print("Agent {}:".format(str(self.agent.jid)) + " ReturnDeliveryman Agent subscribed to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+            print("ReturnDeliveryman {}".format(str(self.agent.jid)) + " subscribes to DeliverymanManager {}".format(str(self.agent.get("deliveryman_contact"))))
 
         await self.send(msg)

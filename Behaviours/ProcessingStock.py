@@ -34,7 +34,8 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     msg.body = jsonpickle.encode(message_body) # self.agent.products
                     msg.set_metadata("performative", "inform")           
             
-                    print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed Product(s) Available to Client Agent {}".format(client))
+                    # print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed Product(s) Available to Client Agent {}".format(client))
+                    print("StockManager {}".format(str(self.agent.jid)) + " informs product(s) available to Client {}".format(client))
                     await self.send(msg)
 
             elif performative == "purchase":
@@ -61,12 +62,12 @@ class ProcessingStock_Behav(CyclicBehaviour):
                         print(f"Product {product_id} not found")
             
                 if not can_fulfill_order:
-
                     negotiation_msg = Message(to=client)
                     negotiation_msg.body = jsonpickle.encode(proposed_products)
                     negotiation_msg.set_metadata("performative", "propose")
 
                     print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent propose Client Agent {}".format(client))
+                    # print("StockManager {}".format(str(self.agent.jid)) + "  Agent propose Client Agent {}".format(client))
                     await self.send(negotiation_msg)
 
                 else:
