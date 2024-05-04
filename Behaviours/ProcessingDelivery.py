@@ -60,7 +60,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
                 msg.body = jsonpickle.encode(delivery)                               
                 msg.set_metadata("performative", "purchase")
 
-                print(f"Agent {str(self.agent.jid)}: DeliverymanManager Agent informed purchase to Deliveryman Agent {str(deliveryman)}")
+                print(f"DeliverymanManager {str(self.agent.jid)} selected deliveryman {deliveryman} to deliver {total_weight:.2f} kg of product(s) purchased.")
                 await self.send(msg)
 
             elif performative == "return":

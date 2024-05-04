@@ -16,14 +16,14 @@ class Position:
     def setY(self, y:int):
         self.y = y
 
-    def setNode(self, x:int):
-            self.node = x
+    def setNode(self, node:int):
+        self.node = node
 
     def getNode(self):
         return self.node        
 
     def toString(self):
-        return "Position [X=" + str(self.x) + ", Y=" + str(self.y) + "]"
+        return "Position [X=" + str(self.x) + ", Y=" + str(self.y) + ", Node=" + str(self.node) + "]"
 
 
        

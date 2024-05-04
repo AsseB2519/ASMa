@@ -40,7 +40,7 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                 preco = 0
                 tamanho = 0
                 for product in selected_products:
-                    print(product.toString())
+                    # print(product.toString())
                     # max_quantity = 100
                     # max_quantity = product.get_quantity()
                     max_quantity = random.randint(2, 125)
@@ -51,12 +51,6 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     lista_compras.append((product.get_product_id(), selected_quantity))
 
                 self.agent.productsBought_notDelivered.append(lista_compras)
-
-                # for product, quantity in lista_compras:
-                #     if product in self.agent.productsBought_notDelivered:
-                #         self.agent.productsBought_notDelivered[product] += quantity
-                #     else:
-                #         self.agent.productsBought_notDelivered[product] = quantity
 
                 purchase = Purchase(str(self.agent.jid), self.agent.position, lista_compras)
 
@@ -89,9 +83,9 @@ class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
                     msg.set_metadata("performative", decision)
 
                     if decision == "accept_proposal":
-                        print(f"Agent {str(self.agent.jid)}: Client Agent accepts proposal from StockManager Agent {str(self.agent.get('stockmanager_contact'))}")
+                        print(f"Client {str(self.agent.jid)} accepts proposal from StockManager {str(self.agent.get('stockmanager_contact'))}")
                     else:
-                        print(f"Agent {str(self.agent.jid)}: Client Agent rejects proposal from StockManager Agent {str(self.agent.get('stockmanager_contact'))}")
+                        print(f"Client {str(self.agent.jid)} rejects proposal from StockManager {str(self.agent.get('stockmanager_contact'))}")
 
                     await self.send(msg)
 

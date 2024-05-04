@@ -21,9 +21,9 @@ class Transport_Behav(CyclicBehaviour):
                 # Calculate the total weight of all scheduled deliveries
                 total_weight = sum([d.getWeight() for d in self.agent.deliveries])
                 max_capacity = {'bike': 5, 'motorbike': 10, 'car': 15}[self.agent.vehicle_type]
-                threshold_weight = 0.7 * max_capacity  # 70% of the maximum capacity
+                threshold_weight = 0.75 * max_capacity  # 75% of the maximum capacity
 
-                # Only proceed if the total weight reaches at least 80% of the vehicle's capacity
+                # Only proceed if the total weight reaches at least 75% of the vehicle's capacity
                 if total_weight >= threshold_weight: # and total_weight < max_capacity
                     self.agent.available = False
                     for delivery in self.agent.deliveries:
@@ -38,10 +38,13 @@ class Transport_Behav(CyclicBehaviour):
                         node_origem = self.agent.position.getNode()
                         
                         # print(node_origem)
-                        location = "Braga"  
-                        neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                        grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                        grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
+                        # location = "Braga"  
+                        # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
+                        print("Calculating the path...")
+                        grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
+                        # grafoAtual = Graph.Grafo(nodes, neigh, edges)
+                        grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
+                        # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
                         start = grafoAtual.get_node_by_id(node_origem)
                         dest = grafoAtual.get_node_by_id(node_dest)
                         grafoAtual.calcula_heuristica_global(dest)
@@ -49,24 +52,49 @@ class Transport_Behav(CyclicBehaviour):
                         caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
                         custoCarro = pathAstar[1][2]
                         custoMota = pathAstar[1][1]
-                        print(caminhoCarroMota)
-                        print(custoCarro)
-                        print(custoMota)
-
-                        distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
-
-                        trip = distance / 10
-                        time.sleep(1)
+                        # print(caminhoCarroMota)
+                        # print(custoCarro)
+                        # print(custoMota)
                         
+                        if not caminhoCarroMota:
+                            print("Same Destination")
+                        else:  
+                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            time.sleep(1)
+
+                        print(self.agent.position.getNode())
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
+                        self.agent.position.setNode(node_dest)
+                        print(self.agent.position.getNode())
 
                         msg = Message(to=client_jid)
                         msg.body = "Delivery"
                         msg.set_metadata("performative", "delivery")
 
-                        print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent delivered the package to Client Agent {}".format(str(client_jid)))
+                        print("Deliveryman {} delivered the package weighing {:.2f} to Client {}".format(str(self.agent.jid), delivery.getWeight(), str(client_jid)))
                         await self.send(msg)
+
+                    # location = "Braga"  
+                    # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
+                    print("Calculating the path...")
+                    grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
+                    # grafoAtual = Graph.Grafo(nodes, neigh, edges)
+                    grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
+                    # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
+                    start = grafoAtual.get_node_by_id(self.agent.position.getNode())
+                    dest = grafoAtual.get_node_by_id(config.WAREHOUSE)
+                    grafoAtual.calcula_heuristica_global(dest)
+                    pathAstar = grafoAtual.procura_aStar(start, dest, "car")
+                    caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
+                    custoCarro = pathAstar[1][2]
+                    custoMota = pathAstar[1][1]
+                    # print(caminhoCarroMota)
+                    # print(custoCarro)
+                    # print(custoMota)
+    
+                    print("Trip: " + " ----> ".join(caminhoCarroMota))
+                    time.sleep(1)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
                     msg.body = jsonpickle.encode(self.agent.deliveries)
@@ -75,15 +103,12 @@ class Transport_Behav(CyclicBehaviour):
                     print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(self.agent.get("deliveryman_contact")))
                     await self.send(msg)    
 
-                    # print("Trip 2")
-                    time.sleep(1)
-
                     self.agent.position.setX(int(config.WAREHOUSE_X))
                     self.agent.position.setY(int(config.WAREHOUSE_Y))
                     self.agent.available = True
                     self.agent.deliveries.clear()
 
-                else: print("Waiting for more purchases! Weight: " + str(total_weight) + " vs Max Capacity: " + str(max_capacity))
+                else: print("Waiting for more purchases! Weight: {:.2f} vs Min Capacity: {:.2f}".format(total_weight, threshold_weight))
 
             elif performative == "return":
                 ret = jsonpickle.decode(msg.body)
@@ -141,6 +166,7 @@ class Transport_Behav(CyclicBehaviour):
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
+                
 
         # else:
         #     print(f"Agent {self.agent.jid}: Did not receive any message after 10 seconds")

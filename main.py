@@ -1,6 +1,7 @@
 import time
 import config
 from spade import quit_spade
+from Classes import Location
 
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
@@ -31,6 +32,22 @@ if __name__ == '__main__':
     #                 888          888  `88b.  `88b    d88'   d888'    .P  888  oo     .d8P 
     #                 o888o        o888o  o888o  `Y8bood8P'  .8888888888P  o888o 8""88888P'  
     # """ + red_end)
+
+    config.LOCATION = config.get_string_input("Enter the Location: ")
+
+    print("Calculating the Graph...")
+    # location = "Braga"  
+    neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(config.LOCATION)
+
+    config.NEIGH = neigh
+    config.EDGES = edges
+    config.NODES = nodes
+    config.NEIGHB = neighb
+    config.EDGESB = edgesb
+    config.NODESB = nodesb
+
+    config.SUPPLIER = config.random_node_selection(config.FILE_PATH)
+    config.WAREHOUSE = config.random_node_selection(config.FILE_PATH)
 
     # config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
     # config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")

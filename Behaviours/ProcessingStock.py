@@ -47,6 +47,8 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 proposed_products = []
                 can_fulfill_order = True
 
+                preco = 0
+                tamanho = 0
                 for product_id, requested_quantity in lista_compras:
                     found = False
                     for product in self.agent.products:
@@ -56,7 +58,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             if available_quantity < requested_quantity:
                                 can_fulfill_order = False
                                 # Não há stock suficiente, propor quantidade disponível
-                                proposed_product = Product_Manager(product.get_product_id(), product.get_name(), product.get_category(), available_quantity, product.get_price())
+                                preco += available_quantity * product.get_price()
+                                tamanho += available_quantity                                
+                                proposed_product = Product_Manager(product.get_product_id(), product.get_name(), product.get_category(), available_quantity, product.get_price(), product.get_max_quantity())
                                 proposed_products.append(proposed_product)
                     if not found:
                         print(f"Product {product_id} not found")
@@ -66,7 +70,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     negotiation_msg.body = jsonpickle.encode(proposed_products)
                     negotiation_msg.set_metadata("performative", "propose")
 
-                    print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent propose Client Agent {}".format(client))
+                    print(f"StockManager {self.agent.jid} propose {tamanho} product(s) paying {preco:.2f}€ to Client Agent {client}")
                     # print("StockManager {}".format(str(self.agent.jid)) + "  Agent propose Client Agent {}".format(client))
                     await self.send(negotiation_msg)
 
@@ -91,7 +95,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     confirmation_msg.body = jsonpickle.encode(request)
                     confirmation_msg.set_metadata("performative", "purchase")
 
-                    print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed purchase delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+                    # print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed purchase delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                     await self.send(confirmation_msg)
                 
             elif performative == "return":
@@ -101,7 +105,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
                     msg.body = jsonpickle.encode(request)                         
                     msg.set_metadata("performative", "return")                   
         
-                    print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed return delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+                    # print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent informed return delivery details to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                     await self.send(msg)
                     
             elif performative == "accept_proposal":
@@ -126,7 +130,7 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 msg.body = jsonpickle.encode(accept_proposal)                         
                 msg.set_metadata("performative", "purchase") 
 
-                print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman after Negociation to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
+                # print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman after Negociation to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                 await self.send(msg)
             
             elif performative == "confirmation_refund":
@@ -173,6 +177,17 @@ class ProcessingStock_Behav(CyclicBehaviour):
                                 if random.random() < probability:
                                     q = product.get_quantity()
                                     product.set_quantity(q + quantity)                            
+
+            elif performative == "supply":
+                supply = jsonpickle.decode(msg.body)
+
+                for p in supply:
+                    quantiy = p.get_quantity()
+                    for product in self.agent.products:
+                        if p.get_product_id() == product.get_product_id():
+                            product.set_quantity(quantiy)
+
+                print("StockManager {}".format(str(self.agent.jid)) + " updated the stock of product(s) supplied by Supplier " + str(msg.sender))
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     
