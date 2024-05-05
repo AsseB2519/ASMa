@@ -20,6 +20,8 @@ NODESB = None
 
 CLIENTS = 1
 
+GRAPH = None
+
 FILE_PATH = 'Classes/dics/nodes.txt'
 
 def get_integer_input(prompt):

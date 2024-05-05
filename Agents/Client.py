@@ -21,6 +21,6 @@ class ClientAgent(agent.Agent):
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
-        c = Return_Behav(period=30)
+        c = Return_Behav(period=10)
         self.add_behaviour(c)
 

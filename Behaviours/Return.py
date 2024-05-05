@@ -36,8 +36,10 @@ class Return_Behav (PeriodicBehaviour):
             selected_products = self.select_products_to_return(self.agent.productsBought, count_weights)
             return_list = self.determine_return_quantities(selected_products)
 
+            tamanho = 0
             # Update the agent's productsBought dictionary
             for product_id, return_quantity in return_list:
+                tamanho += return_quantity
                 if product_id in self.agent.productsBought:
                     self.agent.productsBought[product_id] -= return_quantity
                     # Optionally, check if quantity goes to zero and remove or handle differently
@@ -50,7 +52,7 @@ class Return_Behav (PeriodicBehaviour):
             msg.body = jsonpickle.encode(returns)                                
             msg.set_metadata("performative", "return")                     
 
-            print("Agent {}:".format(str(self.agent.jid)) + " Client Agent returned Product(s) to StockManager Agent {}".format(str(self.agent.get("stockmanager_contact"))))
+            print("Client {}".format(str(self.agent.jid)) + " return " + {tamanho} + " product(s) to StockManager {}".format(str(self.agent.get("stockmanager_contact"))))
             await self.send(msg)
 
             # print(f"Products returned: {return_list}")

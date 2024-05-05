@@ -41,15 +41,15 @@ class Transport_Behav(CyclicBehaviour):
                         # location = "Braga"  
                         # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
                         print("Calculating the path...")
-                        grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
+                        # grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
                         # grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                        grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
+                        # grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
                         # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
-                        start = grafoAtual.get_node_by_id(node_origem)
-                        dest = grafoAtual.get_node_by_id(node_dest)
-                        grafoAtual.calcula_heuristica_global(dest)
-                        pathAstar = grafoAtual.procura_aStar(start, dest, "car")
-                        caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
+                        start = config.GRAPH.get_node_by_id(node_origem)
+                        dest = config.GRAPH.get_node_by_id(node_dest)
+                        config.GRAPH.calcula_heuristica_global(dest)
+                        pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                        caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
                         custoCarro = pathAstar[1][2]
                         custoMota = pathAstar[1][1]
                         # print(caminhoCarroMota)
@@ -58,15 +58,14 @@ class Transport_Behav(CyclicBehaviour):
                         
                         if not caminhoCarroMota:
                             print("Same Destination")
+                            time.sleep(1)
                         else:  
                             print("Trip: " + " ----> ".join(caminhoCarroMota))
                             time.sleep(1)
 
-                        print(self.agent.position.getNode())
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
                         self.agent.position.setNode(node_dest)
-                        print(self.agent.position.getNode())
 
                         msg = Message(to=client_jid)
                         msg.body = "Delivery"
@@ -78,20 +77,13 @@ class Transport_Behav(CyclicBehaviour):
                     # location = "Braga"  
                     # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
                     print("Calculating the path...")
-                    grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
-                    # grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                    grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
-                    # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
-                    start = grafoAtual.get_node_by_id(self.agent.position.getNode())
-                    dest = grafoAtual.get_node_by_id(config.WAREHOUSE)
-                    grafoAtual.calcula_heuristica_global(dest)
-                    pathAstar = grafoAtual.procura_aStar(start, dest, "car")
-                    caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
+                    start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
+                    dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
+                    config.GRAPH.calcula_heuristica_global(dest)
+                    pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                    caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
                     custoCarro = pathAstar[1][2]
                     custoMota = pathAstar[1][1]
-                    # print(caminhoCarroMota)
-                    # print(custoCarro)
-                    # print(custoMota)
     
                     print("Trip: " + " ----> ".join(caminhoCarroMota))
                     time.sleep(1)
@@ -100,11 +92,12 @@ class Transport_Behav(CyclicBehaviour):
                     msg.body = jsonpickle.encode(self.agent.deliveries)
                     msg.set_metadata("performative", "confirmation_delivery")
 
-                    print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliveryManager Agent {}".format(self.agent.get("deliveryman_contact")))
+                    print("Deliveryman {}".format(str(self.agent.jid)) + " has confirmed the delivery of all the package(s) to DeliveryManager {}".format(self.agent.get("deliveryman_contact")))
                     await self.send(msg)    
 
                     self.agent.position.setX(int(config.WAREHOUSE_X))
                     self.agent.position.setY(int(config.WAREHOUSE_Y))
+                    self.agent.position.setNode(config.WAREHOUSE)
                     self.agent.available = True
                     self.agent.deliveries.clear()
 
@@ -128,45 +121,80 @@ class Transport_Behav(CyclicBehaviour):
                         loc = delivery.getPosition()
                         x_dest = loc.getX()
                         y_dest = loc.getY()
+                        node_dest = loc.getNode()
 
                         x_ori = self.agent.position.getX()
                         y_ori = self.agent.position.getY()
-                        distance = math.sqrt((x_dest - x_ori)**2 + (y_dest - y_ori)**2)
-
-                        trip = distance / 10
-                        time.sleep(1)
+                        node_origem = self.agent.position.getNode()
                         
+                        # print(node_origem)
+                        # location = "Braga"  
+                        # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
+                        print("Calculating the path...")
+                        # grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
+                        # grafoAtual = Graph.Grafo(nodes, neigh, edges)
+                        # grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
+                        # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
+                        start = config.GRAPH.get_node_by_id(node_origem)
+                        dest = config.GRAPH.get_node_by_id(node_dest)
+                        config.GRAPH.calcula_heuristica_global(dest)
+                        pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                        caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                        custoCarro = pathAstar[1][2]
+                        custoMota = pathAstar[1][1]
+                        # print(caminhoCarroMota)
+                        # print(custoCarro)
+                        # print(custoMota)
+                        
+                        if not caminhoCarroMota:
+                            print("Same Destination")
+                            time.sleep(1)
+                        else:  
+                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            time.sleep(1)
+
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
+                        self.agent.position.setNode(node_dest)
 
-                        # msg = Message(to=client_jid)
-                        # msg.body = "Refund" 
-                        # msg.set_metadata("performative", "refund")
+                        msg = Message(to=client_jid)
+                        msg.body = "Refund" 
+                        msg.set_metadata("performative", "refund")
 
                         # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
-                        # await self.send(msg)   
+                        await self.send(msg)   
 
-                    time.sleep(1)  
+                    # location = "Braga"  
+                    # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
+                    print("Calculating the path...")
+                    start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
+                    dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
+                    config.GRAPH.calcula_heuristica_global(dest)
+                    pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                    caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                    custoCarro = pathAstar[1][2]
+                    custoMota = pathAstar[1][1]
 
-                    self.agent.position.setX(int(config.WAREHOUSE_X))
-                    self.agent.position.setY(int(config.WAREHOUSE_Y))
+                    print("Trip: " + " ----> ".join(caminhoCarroMota))
+                    time.sleep(1)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
                     msg.body = jsonpickle.encode(self.agent.deliveries)
-                    msg.set_metadata("performative", "confirmation_refund")
+                    msg.set_metadata("performative", "confirmation_delivery")
 
-                    # print("Agent {}:".format(str(self.agent.jid)) + " Deliveryman Agent has confirmed the delivery of the package to DeliverymanManager Agent {}".format(self.agent.get("deliveryman_contact")))
-                    await self.send(msg)   
-                
-                    self.agent.available = True 
+                    print("Deliveryman {}".format(str(self.agent.jid)) + " has confirmed the return of all the package(s) to DeliveryManager {}".format(self.agent.get("deliveryman_contact")))
+                    await self.send(msg)    
 
+                    self.agent.position.setX(int(config.WAREHOUSE_X))
+                    self.agent.position.setY(int(config.WAREHOUSE_Y))
+                    self.agent.position.setNode(config.WAREHOUSE)
+                    self.agent.available = True
                     self.agent.deliveries.clear()
-                    
-                else: print("Waiting for more returns!")
+
+                else: print("Waiting for more returns! Atual: {total_products} vs Min Capacity: 5")
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
-                
 
         # else:
         #     print(f"Agent {self.agent.jid}: Did not receive any message after 10 seconds")

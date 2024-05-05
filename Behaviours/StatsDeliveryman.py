@@ -5,7 +5,7 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
     async def run(self):
         # Dictionary to track deliveries per client
         client_deliveries = Counter()
-        client_returns = Counter()
+        # client_returns = Counter()
 
         # Calculate the total weight of products to be delivered and count deliveries
         total_to_be_delivered = 0
@@ -22,7 +22,7 @@ class StatsDeliveryman_Behav(PeriodicBehaviour):
         # Loop through the dictionary and sum the quantities of products to be returned
         for product_list in self.agent.products_to_be_return:
             products = product_list.getProducts()
-            for _, quantity in product_list:  # Iterate through each tuple in the list
+            for _, quantity in products:  # Iterate through each tuple in the list
                 total_products_to_be_returned += quantity  # Increment the total by the quantity
 
         total_products_returned = 0  # Initialize counter for total products to be returned

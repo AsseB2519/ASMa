@@ -1,5 +1,6 @@
 import time
 import config
+from Classes import Graph
 from spade import quit_spade
 from Classes import Location
 
@@ -45,6 +46,8 @@ if __name__ == '__main__':
     config.NEIGHB = neighb
     config.EDGESB = edgesb
     config.NODESB = nodesb
+
+    config.GRAPH = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
 
     config.SUPPLIER = config.random_node_selection(config.FILE_PATH)
     config.WAREHOUSE = config.random_node_selection(config.FILE_PATH)
