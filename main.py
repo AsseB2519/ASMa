@@ -34,7 +34,8 @@ if __name__ == '__main__':
     #                 o888o        o888o  o888o  `Y8bood8P'  .8888888888P  o888o 8""88888P'  
     # """ + red_end)
 
-    config.LOCATION = config.get_string_input("Enter the Location: ")
+    # config.LOCATION = config.get_string_input("Enter the Location: ")
+    config.LOCATION = "Braga"
 
     print("Calculating the Graph...")
     # location = "Braga"  

@@ -297,8 +297,29 @@ class Grafo:
             else: custo += arc_cost
             i = i + 1
         custos_veiculos.append(custo) # custo para bike
-        custos_veiculos.append(custo + custo*0.13) # custo para moto
-        custos_veiculos.append(custo + custo*0.37) # custo para carro
+        return custos_veiculos
+    
+
+    def calcula_tempo(self, caminho, lista_transito):
+        """
+        Calculates the cost of a path for all of the current type of vehicles
+        :param caminho(List[Node Object]): A list of nodes usualy returned by algorithms
+        :param lista_transito(List[Ruas Object]): A list of edges that had traffic in them when the algorithms passed thought them
+        :return: A list of costs where the first index is cost for the bike, the second cost for the motorcicle and the last for car
+        """
+        teste = caminho
+        custo = 0
+        i = 0
+        custos_veiculos = []
+        while i + 1 < len(teste):
+            arc_cost = self.get_arc_cost(teste[i], teste[i + 1])
+            if self.get_edge_by_nodes(teste[i], teste[i+1]) in lista_transito:
+                custo += arc_cost + arc_cost*(random.uniform(0.20,0.70)) # Caso o edge teve transito este irá aumentar o custo entre 20% e 70%
+            else: custo += arc_cost
+            i = i + 1
+        custos_veiculos.append(custo/4.16667) # custo para bike
+        custos_veiculos.append(custo/9.72222) # custo para moto
+        custos_veiculos.append(custo/12.5) # custo para carro
         return custos_veiculos
 
     ###########################
@@ -800,7 +821,7 @@ class Grafo:
 
                 reconst_path.reverse()
 
-                return (reconst_path, self.calcula_custo(reconst_path, transito_list), n_nos_explorados)
+                return (reconst_path, self.calcula_custo(reconst_path, transito_list), self.calcula_tempo(reconst_path, transito_list), n_nos_explorados)
 
             # for all neighbors of the current node do
 

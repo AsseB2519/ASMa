@@ -50,8 +50,26 @@ class Transport_Behav(CyclicBehaviour):
                         config.GRAPH.calcula_heuristica_global(dest)
                         pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
                         caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
-                        custoCarro = pathAstar[1][2]
-                        custoMota = pathAstar[1][1]
+                        print(pathAstar)
+                        # custoCarro = pathAstar[1][2]
+                        # custoMota = pathAstar[1][1]
+                        # tempoCarro = pathAstar[2][1]  
+                        distancia=0
+                        tempo=0
+                        print("veiculo type" + self.agent.vehicle_type)
+                        if self.agent.vehicle_type == "bike":
+                            pass
+                        elif self.agent.vehicle_type == "car":
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][2]
+                        elif self.agent.vehicle_type == "motorbike":
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][1]
+                            pass
+
+                        print(tempo)
+                        print(distancia)
+
                         # print(caminhoCarroMota)
                         # print(custoCarro)
                         # print(custoMota)
