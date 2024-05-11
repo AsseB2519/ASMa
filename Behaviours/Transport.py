@@ -20,7 +20,7 @@ class Transport_Behav(CyclicBehaviour):
 
                 # Calculate the total weight of all scheduled deliveries
                 total_weight = sum([d.getWeight() for d in self.agent.deliveries])
-                max_capacity = {'bike': 5, 'motorbike': 10, 'car': 15}[self.agent.vehicle_type]
+                max_capacity = {'Bike': 5, 'Moto': 10, 'Car': 15}[self.agent.vehicle_type]
                 threshold_weight = 0.75 * max_capacity  # 75% of the maximum capacity
 
                 # Only proceed if the total weight reaches at least 75% of the vehicle's capacity
@@ -37,49 +37,56 @@ class Transport_Behav(CyclicBehaviour):
                         y_ori = self.agent.position.getY()
                         node_origem = self.agent.position.getNode()
                         
-                        # print(node_origem)
-                        # location = "Braga"  
-                        # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                        print("Calculating the path...")
-                        # grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
-                        # grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                        # grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
-                        # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
-                        start = config.GRAPH.get_node_by_id(node_origem)
-                        dest = config.GRAPH.get_node_by_id(node_dest)
-                        config.GRAPH.calcula_heuristica_global(dest)
-                        pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
-                        caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
-                        print(pathAstar)
-                        # custoCarro = pathAstar[1][2]
-                        # custoMota = pathAstar[1][1]
-                        # tempoCarro = pathAstar[2][1]  
-                        distancia=0
-                        tempo=0
-                        print("veiculo type" + self.agent.vehicle_type)
+                        print("Calculating the path to Client location...")
+
+                        start_time = time.time()
                         if self.agent.vehicle_type == "bike":
+                            # TODO
+                            # start = config.GRAPH_BIKE.get_node_by_id(node_origem)
+                            # dest = config.GRAPH_BIKE.get_node_by_id(node_dest)
+                            # config.GRAPH_BIKE.calcula_heuristica_global(dest)
+                            # pathAstar = config.GRAPH_BIKE.procura_aStar(start, dest, "bike")
+                            # caminhoCarroMota = config.GRAPH_BIKE.converte_caminho(pathAstar[0])
+                            # print(pathAstar)
                             pass
-                        elif self.agent.vehicle_type == "car":
-                            distancia = pathAstar[1][0]
-                            tempo = pathAstar[2][2]
-                        elif self.agent.vehicle_type == "motorbike":
-                            distancia = pathAstar[1][0]
-                            tempo = pathAstar[2][1]
-                            pass
+                        else:
+                            start = config.GRAPH.get_node_by_id(node_origem)
+                            dest = config.GRAPH.get_node_by_id(node_dest)
+                            config.GRAPH.calcula_heuristica_global(dest)
 
-                        print(tempo)
-                        print(distancia)
+                            distancia = 0
+                            tempo = 0
+                            caminhoCarroMota = None
+                            if self.agent.vehicle_type == "car":
+                                pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                                distancia = pathAstar[1][0]
+                                tempo = pathAstar[2][2]
+                            elif self.agent.vehicle_type == "moto":
+                                pathAstar = config.GRAPH.procura_aStar(start, dest, "moto")
+                                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                                distancia = pathAstar[1][0]
+                                tempo = pathAstar[2][1]
 
-                        # print(caminhoCarroMota)
-                        # print(custoCarro)
-                        # print(custoMota)
-                        
+                        elapsed_time = time.time() - start_time
                         if not caminhoCarroMota:
                             print("Same Destination")
                             time.sleep(1)
                         else:  
+                            # print("elapsed_time " + str(elapsed_time))
+                            minutes = int(tempo // 60)
+                            seconds = tempo % 60
+                            print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                            distance_km = distancia / 1000
+                            print("Distance: {:.2f} kilometers".format(distance_km))
                             print("Trip: " + " ----> ".join(caminhoCarroMota))
-                            time.sleep(1)
+                            dormir = tempo - elapsed_time
+                            # print("dormir " + str(dormir))
+
+                            if dormir > 0:
+                                time.sleep(1)
+                            else:
+                                time.sleep(1)
 
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
@@ -92,19 +99,51 @@ class Transport_Behav(CyclicBehaviour):
                         print("Deliveryman {} delivered the package weighing {:.2f} to Client {}".format(str(self.agent.jid), delivery.getWeight(), str(client_jid)))
                         await self.send(msg)
 
-                    # location = "Braga"  
-                    # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                    print("Calculating the path...")
-                    start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
-                    dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
-                    config.GRAPH.calcula_heuristica_global(dest)
-                    pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
-                    caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
-                    custoCarro = pathAstar[1][2]
-                    custoMota = pathAstar[1][1]
-    
-                    print("Trip: " + " ----> ".join(caminhoCarroMota))
-                    time.sleep(1)
+                    start_time = time.time()
+                    if self.agent.vehicle_type == "bike":
+                            # TODO
+                            pass
+                    else:
+                        print("Calculating the path to Warehouse...")
+
+                        start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
+                        dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
+                        config.GRAPH.calcula_heuristica_global(dest)
+                        
+                        distancia = 0
+                        tempo = 0
+                        caminhoCarroMota = None
+                        if self.agent.vehicle_type == "car":
+                            pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                            caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][2]
+                        elif self.agent.vehicle_type == "moto":
+                            pathAstar = config.GRAPH.procura_aStar(start, dest, "moto")
+                            caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][1]
+
+                    elapsed_time = time.time() - start_time
+                    if not caminhoCarroMota:
+                        print("Same Destination")
+                        time.sleep(1)
+                    else:  
+                        minutes = int(tempo // 60)
+                        seconds = tempo % 60
+                        print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                        distance_km = distancia / 1000
+                        print("Distance: {:.2f} kilometers".format(distance_km))
+                        print("Trip: " + " ----> ".join(caminhoCarroMota))
+                        dormir = tempo - elapsed_time                        
+
+                        if dormir > 0:
+                            time.sleep(1)
+                        else:
+                            time.sleep(1)
+
+                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            time.sleep(1)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
                     msg.body = jsonpickle.encode(self.agent.deliveries)
@@ -119,7 +158,7 @@ class Transport_Behav(CyclicBehaviour):
                     self.agent.available = True
                     self.agent.deliveries.clear()
 
-                else: print("Waiting for more purchases! Weight: {:.2f} vs Min Capacity: {:.2f}".format(total_weight, threshold_weight))
+                else: print("Waiting for more purchases! Weight: {:.2f} vs Min Capacity of {}: {:.2f}".format(total_weight, self.agent.vehicle_type, threshold_weight))
 
             elif performative == "return":
                 ret = jsonpickle.decode(msg.body)
@@ -132,7 +171,10 @@ class Transport_Behav(CyclicBehaviour):
                     for _, quantity in products:
                         total_products += quantity
 
-                if total_products >= 5:
+                # Calculate the total weight of all scheduled deliveries
+                min_capacity = {'Bike': 5, 'Moto': 10, 'Car': 15}[self.agent.vehicle_type]                        
+
+                if total_products > min_capacity:
                     self.agent.available = False
                     for delivery in self.agent.deliveries:
                         client_jid = delivery.getAgent()
@@ -145,31 +187,55 @@ class Transport_Behav(CyclicBehaviour):
                         y_ori = self.agent.position.getY()
                         node_origem = self.agent.position.getNode()
                         
-                        # print(node_origem)
-                        # location = "Braga"  
-                        # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                        print("Calculating the path...")
-                        # grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
-                        # grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                        # grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
-                        # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
-                        start = config.GRAPH.get_node_by_id(node_origem)
-                        dest = config.GRAPH.get_node_by_id(node_dest)
-                        config.GRAPH.calcula_heuristica_global(dest)
-                        pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
-                        caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
-                        custoCarro = pathAstar[1][2]
-                        custoMota = pathAstar[1][1]
-                        # print(caminhoCarroMota)
-                        # print(custoCarro)
-                        # print(custoMota)
-                        
+                        print("Calculating the path to Client location...")
+                        start_time = time.time()
+                        if self.agent.vehicle_type == "bike":
+                            # TODO
+                            # start = config.GRAPH_BIKE.get_node_by_id(node_origem)
+                            # dest = config.GRAPH_BIKE.get_node_by_id(node_dest)
+                            # config.GRAPH_BIKE.calcula_heuristica_global(dest)
+                            # pathAstar = config.GRAPH_BIKE.procura_aStar(start, dest, "bike")
+                            # caminhoCarroMota = config.GRAPH_BIKE.converte_caminho(pathAstar[0])
+                            # print(pathAstar)
+                            pass
+                        else:
+                            start = config.GRAPH.get_node_by_id(node_origem)
+                            dest = config.GRAPH.get_node_by_id(node_dest)
+                            config.GRAPH.calcula_heuristica_global(dest)
+
+                            distancia = 0
+                            tempo = 0
+                            caminhoCarroMota = None
+                            if self.agent.vehicle_type == "car":
+                                pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                                distancia = pathAstar[1][0]
+                                tempo = pathAstar[2][2]
+                            elif self.agent.vehicle_type == "moto":
+                                pathAstar = config.GRAPH.procura_aStar(start, dest, "moto")
+                                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                                distancia = pathAstar[1][0]
+                                tempo = pathAstar[2][1]
+
+                        elapsed_time = time.time() - start_time
                         if not caminhoCarroMota:
                             print("Same Destination")
                             time.sleep(1)
                         else:  
+                            # print("elapsed_time " + str(elapsed_time))
+                            minutes = int(tempo // 60)
+                            seconds = tempo % 60
+                            print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                            distance_km = distancia / 1000
+                            print("Distance: {:.2f} kilometers".format(distance_km))
                             print("Trip: " + " ----> ".join(caminhoCarroMota))
-                            time.sleep(1)
+                            dormir = tempo - elapsed_time
+                            # print("dormir " + str(dormir))
+
+                            if dormir > 0:
+                                time.sleep(1)
+                            else:
+                                time.sleep(1)
 
                         self.agent.position.setX(x_dest)
                         self.agent.position.setY(y_dest)
@@ -182,19 +248,51 @@ class Transport_Behav(CyclicBehaviour):
                         # print("Agent {}:".format(str(self.agent.jid)) + " Client Agent delivered the refund products to Deliveryman Agent {}".format(str(client_jid)))
                         await self.send(msg)   
 
-                    # location = "Braga"  
-                    # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                    print("Calculating the path...")
-                    start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
-                    dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
-                    config.GRAPH.calcula_heuristica_global(dest)
-                    pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
-                    caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
-                    custoCarro = pathAstar[1][2]
-                    custoMota = pathAstar[1][1]
+                    start_time = time.time()
+                    if self.agent.vehicle_type == "bike":
+                            # TODO
+                            pass
+                    else:
+                        print("Calculating the path to Warehouse...")
 
-                    print("Trip: " + " ----> ".join(caminhoCarroMota))
-                    time.sleep(1)
+                        start = config.GRAPH.get_node_by_id(self.agent.position.getNode())
+                        dest = config.GRAPH.get_node_by_id(config.WAREHOUSE)
+                        config.GRAPH.calcula_heuristica_global(dest)
+                        
+                        distancia = 0
+                        tempo = 0
+                        caminhoCarroMota = None
+                        if self.agent.vehicle_type == "car":
+                            pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                            caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][2]
+                        elif self.agent.vehicle_type == "moto":
+                            pathAstar = config.GRAPH.procura_aStar(start, dest, "moto")
+                            caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                            distancia = pathAstar[1][0]
+                            tempo = pathAstar[2][1]
+
+                    elapsed_time = time.time() - start_time
+                    if not caminhoCarroMota:
+                        print("Same Destination")
+                        time.sleep(1)
+                    else:  
+                        minutes = int(tempo // 60)
+                        seconds = tempo % 60
+                        print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                        distance_km = distancia / 1000
+                        print("Distance: {:.2f} kilometers".format(distance_km))
+                        print("Trip: " + " ----> ".join(caminhoCarroMota))
+                        dormir = tempo - elapsed_time                        
+
+                        if dormir > 0:
+                            time.sleep(1)
+                        else:
+                            time.sleep(1)
+
+                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            time.sleep(1)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
                     msg.body = jsonpickle.encode(self.agent.deliveries)

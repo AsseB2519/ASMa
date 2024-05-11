@@ -5,6 +5,7 @@ from Behaviours.TransportSupply import TransportSupply_Behav
 from Classes.Position import Position
 
 class SupplierAgent(agent.Agent):
+
     async def setup(self):
         # print("Agent {}".format(str(self.jid)) + " starting...")
 

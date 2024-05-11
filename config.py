@@ -21,6 +21,7 @@ NODESB = None
 CLIENTS = 1
 
 GRAPH = None
+GRAPH_BIKE = None
 
 FILE_PATH = 'Classes/dics/nodes.txt'
 

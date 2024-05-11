@@ -9,9 +9,6 @@ from Classes.Product_Manager import Product_Manager
 
 class StockManagerAgent(agent.Agent):
 
-    def set_gui(self, gui):
-        self.gui = gui
-
     async def setup(self):
         # print("Agent {}".format(str(self.jid)) + " starting...")
         self.productsReturned = {}
@@ -37,13 +34,13 @@ class StockManagerAgent(agent.Agent):
         a = ProcessingStock_Behav()
         self.add_behaviour(a)
 
-        c = RequestSupply_Behav(period=50)
+        c = RequestSupply_Behav(period=90)
         self.add_behaviour(c)
 
         d = ProcessingSupply_Behav()
         self.add_behaviour(d)
 
-        b = StatsStock_Behav(period=40)
+        b = StatsStock_Behav(period=50)
         self.add_behaviour(b)
 
 

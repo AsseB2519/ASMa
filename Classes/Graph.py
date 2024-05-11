@@ -319,7 +319,7 @@ class Grafo:
             i = i + 1
         custos_veiculos.append(custo/4.16667) # custo para bike
         custos_veiculos.append(custo/9.72222) # custo para moto
-        custos_veiculos.append(custo/12.5) # custo para carro
+        custos_veiculos.append(custo/13.8889) # custo para carro
         return custos_veiculos
 
     ###########################

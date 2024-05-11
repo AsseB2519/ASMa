@@ -25,28 +25,42 @@ class TransportSupply_Behav(CyclicBehaviour):
                 y_ori = self.agent.position.getY()
                 node_origem = self.agent.position.getNode()
 
-                # location = "Braga"  
-                # neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(location)
-                print("Calculating the path...")
-                grafoAtual = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
-                # grafoAtual = Graph.Grafo(nodes, neigh, edges)
-                grafoAtualb = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
-                # grafoAtualb = Graph.Grafo(nodesb, neighb, edgesb)
-                start = grafoAtual.get_node_by_id(node_origem)
-                dest = grafoAtual.get_node_by_id(node_dest)
-                grafoAtual.calcula_heuristica_global(dest)
-                pathAstar = grafoAtual.procura_aStar(start, dest, "car")
-                caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
-                custoCarro = pathAstar[1][2]
-                # custoMota = pathAstar[1][1]
-                # print(caminhoCarroMota)
-                # print(custoCarro)
-                # print(custoMota)
+                print("Calculating the path to SupplierWarehouse...")
+                start_time = time.time()
 
-                print("Supplier Trip: Warehouse ----> " + " ----> ".join(caminhoCarroMota) + " ----> SupplyWarehouse")
-                time.sleep(1)
+                start = config.GRAPH.get_node_by_id(node_origem)
+                dest = config.GRAPH.get_node_by_id(node_dest)
+                config.GRAPH.calcula_heuristica_global(dest)
+                pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                distancia = pathAstar[1][0]
+                tempo = pathAstar[2][2]
 
-                # Modify the quantity with a higher probability of being the maximum
+                elapsed_time = time.time() - start_time
+                if not caminhoCarroMota:
+                    print("Same Destination")
+                    time.sleep(1)
+                else:  
+                    # print("elapsed_time " + str(elapsed_time))
+                    minutes = int(tempo // 60)
+                    seconds = tempo % 60
+                    print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                    distance_km = distancia / 1000
+                    print("Distance: {:.2f} kilometers".format(distance_km))
+                    print("Supplier Trip: Warehouse ----> " + " ----> ".join(caminhoCarroMota) + " -----> SupplierWarehouse")
+                    dormir = tempo - elapsed_time
+                    # print("dormir " + str(dormir))
+
+                    if dormir > 0:
+                        time.sleep(1)
+                    else:
+                        time.sleep(1)
+
+                self.agent.position.setX(config.SUPPLIER_X)
+                self.agent.position.setY(config.SUPPLIER_Y)
+                self.agent.position.setNode(config.SUPPLIER)
+
+                bool = True
                 for p in supply:
                     current_quantity = p.get_quantity()
                     max_quantity = p.get_max_quantity()
@@ -56,34 +70,105 @@ class TransportSupply_Behav(CyclicBehaviour):
                         new_quantity = max_quantity
                     else:
                         # 20% chance to set to a random quantity between current and max
+                        bool = False
                         new_quantity = random.randint(current_quantity, max_quantity)
-                    
+
                     p.set_quantity(new_quantity)
-                    # print(current_quantity)
-                    # print(new_quantity)
+                    
+                if bool == False:
+                    msg = Message(to=stockmanager)
+                    msg.body = jsonpickle.encode(supply)
+                    msg.set_metadata("performative", "supplier_propose")
+
+                    print("Supplier {}".format(str(self.agent.jid)) + " proposed different Stock to StockManager " + str(stockmanager))
+                    await self.send(msg)
+                
+                else: 
+                    x_dest = config.WAREHOUSE_X
+                    y_dest = config.WAREHOUSE_Y
+                    node_dest = config.WAREHOUSE
+
+                    print("Calculating the path to Warehouse...")
+                    start_time = time.time()
+                    start = config.GRAPH.get_node_by_id(node_origem)
+                    dest = config.GRAPH.get_node_by_id(node_dest)
+                    config.GRAPH.calcula_heuristica_global(dest)
+                    pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                    caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                    distancia = pathAstar[1][0]
+                    tempo = pathAstar[2][2]
+
+                    elapsed_time = time.time() - start_time
+                    if not caminhoCarroMota:
+                        print("Same Destination")
+                        time.sleep(1)
+                    else:  
+                        # print("elapsed_time " + str(elapsed_time))
+                        minutes = int(tempo // 60)
+                        seconds = tempo % 60
+                        print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                        distance_km = distancia / 1000
+                        print("Distance: {:.2f} kilometers".format(distance_km))
+                        print("Supplier Trip: Warehouse ----> " + " ----> ".join(caminhoCarroMota) + " -----> SupplierWarehouse")
+                        dormir = tempo - elapsed_time
+                        # print("dormir " + str(dormir))
+
+                        if dormir > 0:
+                            time.sleep(1)
+                        else:
+                            time.sleep(1)
+                                    
+                    self.agent.position.setX(config.WAREHOUSE_X)
+                    self.agent.position.setY(config.WAREHOUSE_Y)
+                    self.agent.position.setNode(config.WAREHOUSE)
+
+                    msg = Message(to=str(stockmanager))
+                    msg.body = jsonpickle.encode(supply)          
+                    msg.set_metadata("performative", "supply")
+
+                    # print("Supplier {}".format(str(self.agent.jid)) + " supplied stock to StockManager " + str(stockmanager))
+                    await self.send(msg)
+
+            elif performative == "accept_proposal":
+                supply = jsonpickle.decode(msg.body)
 
                 x_dest = config.WAREHOUSE_X
                 y_dest = config.WAREHOUSE_Y
                 node_dest = config.WAREHOUSE
 
-                self.agent.position.setX(config.SUPPLIER_X)
-                self.agent.position.setY(config.SUPPLIER_Y)
-                self.agent.position.setNode(config.SUPPLIER)
+                print("Calculating the path to Warehouse...")
+                start_time = time.time()
+                start = config.GRAPH.get_node_by_id(node_origem)
+                dest = config.GRAPH.get_node_by_id(node_dest)
+                config.GRAPH.calcula_heuristica_global(dest)
+                pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                distancia = pathAstar[1][0]
+                tempo = pathAstar[2][2]
 
-                print("Calculating the path...")
-                start = grafoAtual.get_node_by_id(self.agent.position.getNode())
-                dest = grafoAtual.get_node_by_id(node_dest)
-                grafoAtual.calcula_heuristica_global(dest)
-                pathAstar = grafoAtual.procura_aStar(start, dest, "car")
-                caminhoCarroMota = grafoAtual.converte_caminho(pathAstar[0])
-                custoCarro = pathAstar[1][2]
-                # custoMota = pathAstar[1][1]
-                # print(caminhoCarroMota)
-                # print(custoCarro)
-                # print(custoMota)
-                                
-                print("Supplier Trip: SupplyWarehouse  ----> " + " ----> ".join(caminhoCarroMota) + " -----> Warehouse")   
-                time.sleep(1)
+                elapsed_time = time.time() - start_time
+                if not caminhoCarroMota:
+                    print("Same Destination")
+                    time.sleep(1)
+                else:  
+                    # print("elapsed_time " + str(elapsed_time))
+                    minutes = int(tempo // 60)
+                    seconds = tempo % 60
+                    print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                    distance_km = distancia / 1000
+                    print("Distance: {:.2f} kilometers".format(distance_km))
+                    print("Supplier Trip: Warehouse ----> " + " ----> ".join(caminhoCarroMota) + " -----> SupplierWarehouse")
+                    dormir = tempo - elapsed_time
+                    # print("dormir " + str(dormir))
+
+                    if dormir > 0:
+                        time.sleep(1)
+                    else:
+                        time.sleep(1)
+
+                self.agent.position.setX(config.WAREHOUSE_X)
+                self.agent.position.setY(config.WAREHOUSE_Y)
+                self.agent.position.setNode(config.WAREHOUSE)
 
                 msg = Message(to=str(stockmanager))
                 msg.body = jsonpickle.encode(supply)          
@@ -91,6 +176,46 @@ class TransportSupply_Behav(CyclicBehaviour):
 
                 # print("Supplier {}".format(str(self.agent.jid)) + " supplied stock to StockManager " + str(stockmanager))
                 await self.send(msg)
-            
+
+            elif performative == "reject_proposal":
+                x_dest = config.WAREHOUSE_X
+                y_dest = config.WAREHOUSE_Y
+                node_dest = config.WAREHOUSE
+
+                print("Calculating the path to Warehouse...")
+                start_time = time.time()
+                start = config.GRAPH.get_node_by_id(node_origem)
+                dest = config.GRAPH.get_node_by_id(node_dest)
+                config.GRAPH.calcula_heuristica_global(dest)
+                pathAstar = config.GRAPH.procura_aStar(start, dest, "car")
+                caminhoCarroMota = config.GRAPH.converte_caminho(pathAstar[0])
+                distancia = pathAstar[1][0]
+                tempo = pathAstar[2][2]
+
+                elapsed_time = time.time() - start_time
+                if not caminhoCarroMota:
+                    print("Same Destination")
+                    time.sleep(1)
+                else:  
+                    # print("elapsed_time " + str(elapsed_time))
+                    minutes = int(tempo // 60)
+                    seconds = tempo % 60
+                    print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
+                    distance_km = distancia / 1000
+                    print("Distance: {:.2f} kilometers".format(distance_km))
+                    print("Supplier Trip: Warehouse ----> " + " ----> ".join(caminhoCarroMota) + " -----> SupplierWarehouse")
+                    dormir = tempo - elapsed_time
+                    # print("dormir " + str(dormir))
+
+                    if dormir > 0:
+                        time.sleep(1)
+                    else:
+                        time.sleep(1)
+
+                self.agent.position.setX(config.WAREHOUSE_X)
+                self.agent.position.setY(config.WAREHOUSE_Y)
+                self.agent.position.setNode(config.WAREHOUSE)
+
+                print("Supplier {}".format(str(self.agent.jid)) + " is back to the Warehouse without Products")
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")                       

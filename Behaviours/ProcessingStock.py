@@ -188,9 +188,25 @@ class ProcessingStock_Behav(CyclicBehaviour):
                             product.set_quantity(quantiy)
 
                 print("StockManager {}".format(str(self.agent.jid)) + " updated the stock of product(s) supplied by Supplier " + str(msg.sender))
+            
+            elif performative == "supplier_propose":
+                supply = jsonpickle.decode(msg.body)
+                if random.random() < 0.8:
+                    msg = Message(to=self.agent.get('supplier_contact'))   
+                    msg.body = jsonpickle.encode(supply)          
+                    msg.set_metadata("performative", "accept_proposal")
 
+                    print("StockManager {}".format(str(self.agent.jid)) + " accepted the proposal by Supplier " + str(msg.sender))
+                else: 
+                    msg = Message(to=self.agent.get('supplier_contact'))   
+                    msg.body = jsonpickle.encode(supply)          
+                    msg.set_metadata("performative", "reject_proposal")
+
+                    print("StockManager {}".format(str(self.agent.jid)) + " rejected the proposal by Supplier " + str(msg.sender))
+            
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     
+                
         # else:
         #     print("Agent {}:".format(str(self.agent.jid)) + "Did not received any message after 10 seconds")
 

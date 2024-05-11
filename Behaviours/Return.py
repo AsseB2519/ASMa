@@ -52,7 +52,7 @@ class Return_Behav (PeriodicBehaviour):
             msg.body = jsonpickle.encode(returns)                                
             msg.set_metadata("performative", "return")                     
 
-            print("Client {}".format(str(self.agent.jid)) + " return " + {tamanho} + " product(s) to StockManager {}".format(str(self.agent.get("stockmanager_contact"))))
+            print("Client {}".format(str(self.agent.jid)) + " return " + {str(tamanho)} + " product(s) to StockManager {}".format(str(self.agent.get("stockmanager_contact"))))
             await self.send(msg)
 
             # print(f"Products returned: {return_list}")

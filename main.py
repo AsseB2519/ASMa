@@ -20,25 +20,10 @@ MAX_CLIENTS = 1
 
 if __name__ == '__main__':
 
-    # ANSI escape code for red text
-    # red_start = "\033[91m"
-    # red_end = "\033[0m"
-
-    # print(red_start + """
-    #                 ooooooooo.   ooooooooo.     .oooooo.    oooooooooooo ooooo  .oooooo..o 
-    #                 `888   `Y88. `888   `Y88.  d8P'  `Y8b  d'""""""d888' `888' d8P'    `Y8 
-    #                 888   .d88'  888   .d88' 888      888       .888P    888  Y88bo.      
-    #                 888ooo88P'   888ooo88P'  888      888      d888'     888   `"Y8888o.  
-    #                 888          888`88b.    888      888    .888P       888       `"Y88b 
-    #                 888          888  `88b.  `88b    d88'   d888'    .P  888  oo     .d8P 
-    #                 o888o        o888o  o888o  `Y8bood8P'  .8888888888P  o888o 8""88888P'  
-    # """ + red_end)
-
     # config.LOCATION = config.get_string_input("Enter the Location: ")
-    config.LOCATION = "Braga"
+    config.LOCATION = "Sabrosa"
 
     print("Calculating the Graph...")
-    # location = "Braga"  
     neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(config.LOCATION)
 
     config.NEIGH = neigh
@@ -49,15 +34,10 @@ if __name__ == '__main__':
     config.NODESB = nodesb
 
     config.GRAPH = Graph.Grafo(config.NODES, config.NEIGH, config.EDGES)
+    config.GRAPH_MOTO = Graph.Grafo(config.NODESB, config.NEIGHB, config.EDGESB)
 
     config.SUPPLIER = config.random_node_selection(config.FILE_PATH)
     config.WAREHOUSE = config.random_node_selection(config.FILE_PATH)
-
-    # config.WAREHOUSE_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
-    # config.WAREHOUSE_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
-
-    # config.SUPPLIER_X = config.get_integer_input("Enter the location of the Warehouse: X = ")
-    # config.SUPPLIER_Y = config.get_integer_input("Enter the location of the Warehouse: Y = ")
 
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)
