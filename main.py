@@ -3,6 +3,7 @@ import config
 from Classes import Graph
 from spade import quit_spade
 from Classes import Location
+from interface import main_menu
 
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
@@ -15,13 +16,14 @@ import tkinter as tk
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
-MAX_DELIVERYMAN = 2 
-MAX_CLIENTS = 1  
+MAX_DELIVERYMAN = config.DELIVERYMAN
+MAX_CLIENTS = config.CLIENTS
 
 if __name__ == '__main__':
 
+    main_menu()
     # config.LOCATION = config.get_string_input("Enter the Location: ")
-    config.LOCATION = "Sabrosa"
+    # config.LOCATION = "Sabrosa"
 
     print("Calculating the Graph...")
     neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(config.LOCATION)

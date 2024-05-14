@@ -18,7 +18,8 @@ NEIGHB = None
 EDGESB = None
 NODESB = None
 
-CLIENTS = 1
+CLIENTS = None
+DELIVERYMAN = None
 
 GRAPH = None
 GRAPH_BIKE = None
