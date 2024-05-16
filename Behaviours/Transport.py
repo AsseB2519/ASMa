@@ -320,7 +320,7 @@ class Transport_Behav(CyclicBehaviour):
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
                     msg.body = jsonpickle.encode(self.agent.deliveries)
-                    msg.set_metadata("performative", "confirmation_delivery")
+                    msg.set_metadata("performative", "confirmation_refund")
 
                     print("Deliveryman {}".format(str(self.agent.jid)) + " has confirmed the return of all the package(s) to DeliveryManager {}".format(self.agent.get("deliveryman_contact")))
                     await self.send(msg)    
