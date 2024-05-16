@@ -20,11 +20,11 @@ class DeliverymanAgent(agent.Agent):
         
         categories = ["Bike", "Moto", "Car"]  # List of possible vehicle categories
         # probabilities_cat = [0, 0.45, 0.55]
-        probabilities_cat = [1, 0, 0]
+        probabilities_cat = [0.15, 0.3, 0.55]
         self.vehicle_type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]
-        probabilities = [1, 0] 
+        probabilities = [0.7, 0.3] 
         self.type = random.choices(actions, weights=probabilities)[0]
         
         a = RegisterDelivery_Behav()
