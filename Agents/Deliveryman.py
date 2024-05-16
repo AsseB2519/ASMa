@@ -19,7 +19,8 @@ class DeliverymanAgent(agent.Agent):
         self.position = Position(int(config.WAREHOUSE_X), int(config.WAREHOUSE_Y), config.random_node_selection(config.FILE_PATH))
         
         categories = ["Bike", "Moto", "Car"]  # List of possible vehicle categories
-        probabilities_cat = [0, 0.45, 0.55]
+        # probabilities_cat = [0, 0.45, 0.55]
+        probabilities_cat = [1, 0, 0]
         self.vehicle_type = random.choices(categories, weights=probabilities_cat)[0]
 
         actions = ["Purchase", "Return"]

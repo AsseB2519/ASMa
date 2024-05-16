@@ -905,7 +905,7 @@ class Grafo:
                 return (reconst_path, self.calcula_custo(reconst_path))
 
             # para todos os vizinhos  do nodo corrente
-            for (m, weight) in self.getNeighbours(n,vehicle):
+            for (m, weight) in self.getNeighbours(n, vehicle):
                 # Se o nodo corrente nao esta na open nem na closed list
                 # adiciona-lo à open_list e marcar o antecessor
                 if m not in open_list and m not in closed_list:
