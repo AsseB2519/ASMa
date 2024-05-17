@@ -1,29 +1,105 @@
+import tkinter as tk
+from tkinter import scrolledtext
+from tkinter import ttk, PhotoImage
 import time
+import threading
 import config
 from Classes import Graph
 from spade import quit_spade
 from Classes import Location
 from MainPage import main_menu
-
 from Agents.Client import ClientAgent
 from Agents.Deliveryman import DeliverymanAgent
 from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 from Agents.Supplier import SupplierAgent
-
-import tkinter as tk
+from PIL import Image, ImageTk
+import sys
 
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
 
-if __name__ == '__main__':
+class Logger:
+    def __init__(self, text_widget):
+        self.text_widget = text_widget
 
-    main_menu()
-    # config.LOCATION = config.get_string_input("Enter the Location: ")
-    # config.LOCATION = "Sabrosa"
+    def write(self, message):
+        self.text_widget.insert(tk.END, message)
+        self.text_widget.see(tk.END)
+
+    def flush(self):
+        pass  # Needed for file-like object interface
+
+def setup_tkinter_window():
+    root = tk.Tk()
+    root.title("eBUY")
+    root.configure(bg='#ADD8E6')
+
+    # Set the icon for the window
+    icon = tk.PhotoImage(file='eBUY.png')
+    root.iconphoto(False, icon)
+
+    # Apply a theme
+    style = ttk.Style(root)
+    style.theme_use("clam")
+
+    # Load and resize the logo
+    logo_image = Image.open("eBUY.png")
+    logo_image = logo_image.resize((150, 75), Image.LANCZOS)  # Resize the image to 100x100 pixels
+    logo = ImageTk.PhotoImage(logo_image)
+
+    # Add logo in the center
+    # logo = tk.PhotoImage(file="eBUY.png")
+    logo_label = ttk.Label(root, image=logo, background='#ADD8E6')
+    logo_label.image = logo  # Keep a reference to avoid garbage collection
+    logo_label.pack(pady=10)
+
+    header = ttk.Label(root, text="Agent Terminal", font=("Helvetica", 13, "bold"), background='#ADD8E6')
+    header.pack(pady=10)
+
+    log_frame = ttk.Frame(root, padding="10")
+    log_frame.pack(expand=True, fill=tk.BOTH)
+
+    log_text = scrolledtext.ScrolledText(log_frame, wrap=tk.WORD, font=("Consolas", 10))
+    log_text.pack(expand=True, fill=tk.BOTH)
+
+    # Centering the window
+    root.update_idletasks()  # Update internal states
+    width = root.winfo_width()
+    height = root.winfo_height()
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+    root.geometry(f'+{x}+{y}')
     
-    MAX_DELIVERYMAN = config.DELIVERYMAN
+    return root, log_text
+
+# def setup_tkinter_window():
+#     root = tk.Tk()
+#     root.title("eBUY")
+
+#     # Apply a theme
+#     style = ttk.Style(root)
+#     style.theme_use("clam")
+
+#     # Add header
+#     header = ttk.Label(root, text="eBUY Agent Terminal", font=("Helvetica", 16, "bold"))
+#     header.pack(pady=10)
+
+#     log_frame = ttk.Frame(root, padding="10")
+#     log_frame.pack(expand=True, fill=tk.BOTH)
+
+#     log_text = scrolledtext.ScrolledText(log_frame, wrap=tk.WORD, font=("Consolas", 10))
+#     log_text.pack(expand=True, fill=tk.BOTH)
+    
+#     return root, log_text
+
+def start_agents():
+    # Your existing main function content goes here
+    # config.LOCATION = "Sabrosa"
+    # config.CLIENTS = 1
+    # config.DELIVERYMAN = 2
     MAX_CLIENTS = config.CLIENTS
+    MAX_DELIVERYMAN = config.DELIVERYMAN
 
     print("Calculating the Graph...")
     neigh, edges, nodes, neighb, edgesb, nodesb = Location.run(config.LOCATION)
@@ -60,7 +136,7 @@ if __name__ == '__main__':
     stockmanager_agent.set('supplier_contact', supplier_jid)
 
     res_stockmanager = stockmanager_agent.start(auto_register=True)
-    res_stockmanager.result() 
+    res_stockmanager.result()
 
     deliverymanmanager_agent.set('stock_contact', stockmanager_jid)
 
@@ -82,11 +158,6 @@ if __name__ == '__main__':
     time.sleep(1)
 
     for i in range(1, MAX_CLIENTS + 1):
-
-        # Sleep 1 second for each x=10 Client agents added
-        # if i % 10 == 0:
-            # time.sleep(1)
-
         client_jid = 'client{}@'.format(str(i)) + XMPP_SERVER
         client_agent = ClientAgent(client_jid, PASSWORD)
 
@@ -109,3 +180,30 @@ if __name__ == '__main__':
     print('Agents finished')
 
     quit_spade()
+
+def on_closing(root):
+    root.quit()
+    sys.exit()
+
+def main():
+
+    main_menu()
+
+    root, log_text = setup_tkinter_window()
+    logger = Logger(log_text)
+    
+    # Redirect print statements to the logger
+    import sys
+    sys.stdout = logger
+
+    # Start agent initialization in a separate thread
+    agent_thread = threading.Thread(target=start_agents)
+    agent_thread.start()
+
+    # Bind the closing event to ensure the terminal stops when the window is closed
+    # root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root))
+
+    root.mainloop()
+
+if __name__ == '__main__':
+    main()

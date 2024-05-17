@@ -11,14 +11,18 @@ def main_menu():
         
         # Optionally, you could also print these values or log them to ensure they're set
         print(f"Configuration set - LOCATION: {config.LOCATION}, CLIENTS: {config.CLIENTS}, DELIVERYMAN: {config.DELIVERYMAN}")
-        print(f"Starting at {config.LOCATION} with {config.DELIVERYMAN} delivery personnel and {config.CLIENTS} clients.")
+        print(f"Starting at {config.LOCATION} with {config.DELIVERYMAN} deliverymen and {config.CLIENTS} clients.")
 
         root.destroy()
 
     # Initialize the main window
     root = tk.Tk()
-    root.title("eBUY")
+    # root = tk.Toplevel()
+    root.title("eBUY.png")
     root.configure(bg='#ADD8E6')  # Light blue background
+
+    icon = tk.PhotoImage(file='eBUY.png')
+    root.iconphoto(False, icon)
 
     style = ttk.Style()
     style.theme_use('clam')
