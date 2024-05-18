@@ -145,7 +145,7 @@ class Transport_Behav(CyclicBehaviour):
                         print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
                         distance_km = distancia / 1000
                         print("Distance: {:.2f} kilometers".format(distance_km))
-                        print("Trip: " + " ----> ".join(caminhoCarroMota))
+                        print("Trip: " + " ----> ".join(caminho))
                         dormir = tempo - elapsed_time                        
 
                         if dormir > 0:
@@ -153,7 +153,7 @@ class Transport_Behav(CyclicBehaviour):
                         else:
                             time.sleep(1)
 
-                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            print("Trip: " + " ----> ".join(caminho))
                             time.sleep(1)
 
                     msg = Message(to=self.agent.get("deliveryman_contact"))
@@ -243,7 +243,7 @@ class Transport_Behav(CyclicBehaviour):
                             print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
                             distance_km = distancia / 1000
                             print("Distance: {:.2f} kilometers".format(distance_km))
-                            print("Trip: " + " ----> ".join(caminhoCarroMota))
+                            print("Trip: " + " ----> ".join(caminho))
                             dormir = tempo - elapsed_time
                             # print("dormir " + str(dormir))
 
@@ -307,7 +307,7 @@ class Transport_Behav(CyclicBehaviour):
                         print("Time: {} minutes {:.0f} seconds".format(minutes, seconds))
                         distance_km = distancia / 1000
                         print("Distance: {:.2f} kilometers".format(distance_km))
-                        print("Trip: " + " ----> ".join(caminhoCarroMota))
+                        print("Trip: " + " ----> ".join(caminho))
                         dormir = tempo - elapsed_time                        
 
                         if dormir > 0:

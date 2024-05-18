@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import scrolledtext
-from tkinter import ttk
-from PIL import Image, ImageTk
+from tkinter import ttk, PhotoImage
+import time
 import threading
-import sys
 import config
 from Classes import Graph
 from spade import quit_spade
@@ -14,7 +13,12 @@ from Agents.Deliveryman import DeliverymanAgent
 from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 from Agents.Supplier import SupplierAgent
-import time
+from PIL import Image, ImageTk
+import sys
+from colorama import Fore, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'
@@ -29,15 +33,6 @@ class Logger:
 
     def flush(self):
         pass  # Needed for file-like object interface
-
-def create_agent_tab(notebook, agent_name):
-    tab = ttk.Frame(notebook)
-    notebook.add(tab, text=agent_name)
-    
-    log_text = scrolledtext.ScrolledText(tab, wrap=tk.WORD, font=("Consolas", 10))
-    log_text.pack(expand=True, fill=tk.BOTH)
-    
-    return Logger(log_text)
 
 def setup_tkinter_window():
     root = tk.Tk()
@@ -54,10 +49,11 @@ def setup_tkinter_window():
 
     # Load and resize the logo
     logo_image = Image.open("eBUY.png")
-    logo_image = logo_image.resize((150, 90), Image.LANCZOS)  # Resize the image
+    logo_image = logo_image.resize((150, 90), Image.LANCZOS)  # Resize the image to 100x100 pixels
     logo = ImageTk.PhotoImage(logo_image)
 
     # Add logo in the center
+    # logo = tk.PhotoImage(file="eBUY.png")
     logo_label = ttk.Label(root, image=logo, background='#ADD8E6')
     logo_label.image = logo  # Keep a reference to avoid garbage collection
     logo_label.pack(pady=10)
@@ -65,12 +61,26 @@ def setup_tkinter_window():
     header = ttk.Label(root, text="Agent Terminal", font=("Helvetica", 13, "bold"), background='#ADD8E6')
     header.pack(pady=10)
 
-    notebook = ttk.Notebook(root)
-    notebook.pack(expand=True, fill=tk.BOTH)
-    
-    return root, notebook
+    log_frame = ttk.Frame(root, padding="10")
+    log_frame.pack(expand=True, fill=tk.BOTH)
 
-def start_agents(notebook):
+    log_text = scrolledtext.ScrolledText(log_frame, wrap=tk.WORD, font=("Consolas", 10))
+    log_text.pack(expand=True, fill=tk.BOTH)
+
+    root.geometry("1000x600")  # Width x Height
+
+    # Centering the window
+    root.update_idletasks()  # Update internal states
+    width = root.winfo_width()
+    height = root.winfo_height()
+    x = (root.winfo_screenwidth() // 2) - (width // 2)
+    y = (root.winfo_screenheight() // 2) - (height // 2)
+    root.geometry(f'+{x}+{y}')
+    
+    return root, log_text
+
+def start_agents():
+
     MAX_CLIENTS = config.CLIENTS
     MAX_DELIVERYMAN = config.DELIVERYMAN
 
@@ -91,24 +101,18 @@ def start_agents(notebook):
     config.WAREHOUSE = config.random_node_selection(config.FILE_PATH)
 
     deliverymanmanager_jid = 'deliverymanmanager@' + XMPP_SERVER
-    deliverymanmanager_logger = create_agent_tab(notebook, "DeliverymanManager")
-    sys.stdout = deliverymanmanager_logger
     deliverymanmanager_agent = DeliverymanManagerAgent(deliverymanmanager_jid, PASSWORD)
 
     res_deliverymanmanager = deliverymanmanager_agent.start(auto_register=True)
     res_deliverymanmanager.result()
 
     supplier_jid = 'supplier@' + XMPP_SERVER
-    supplier_logger = create_agent_tab(notebook, "Supplier")
-    sys.stdout = supplier_logger
     supplier_agent = SupplierAgent(supplier_jid, PASSWORD)
 
     res_supplier = supplier_agent.start(auto_register=True)
     res_supplier.result()
 
     stockmanager_jid = 'stockmanager@' + XMPP_SERVER
-    stockmanager_logger = create_agent_tab(notebook, "StockManager")
-    sys.stdout = stockmanager_logger
     stockmanager_agent = StockManagerAgent(stockmanager_jid, PASSWORD)
 
     stockmanager_agent.set('deliveryman_contact', deliverymanmanager_jid)
@@ -126,8 +130,6 @@ def start_agents(notebook):
 
     for i in range(1, MAX_DELIVERYMAN + 1):
         deliveryman_jid = 'deliveryman{}@'.format(str(i)) + XMPP_SERVER
-        deliveryman_logger = create_agent_tab(notebook, f"Deliveryman{i}")
-        sys.stdout = deliveryman_logger
         deliveryman_agent = DeliverymanAgent(deliveryman_jid, PASSWORD)
 
         deliveryman_agent.set('deliveryman_contact', deliverymanmanager_jid)
@@ -140,8 +142,6 @@ def start_agents(notebook):
 
     for i in range(1, MAX_CLIENTS + 1):
         client_jid = 'client{}@'.format(str(i)) + XMPP_SERVER
-        client_logger = create_agent_tab(notebook, f"Client{i}")
-        sys.stdout = client_logger
         client_agent = ClientAgent(client_jid, PASSWORD)
 
         client_agent.set('stockmanager_contact', stockmanager_jid)
@@ -164,22 +164,20 @@ def start_agents(notebook):
 
     quit_spade()
 
-def on_closing(root):
-    # This function is called when the window is closed
-    root.quit()
-    sys.exit()
-
 def main():
+
     main_menu()
 
-    root, notebook = setup_tkinter_window()
+    root, log_text = setup_tkinter_window()
+    logger = Logger(log_text)
     
-    # Start agent initialization in a separate thread
-    agent_thread = threading.Thread(target=start_agents, args=(notebook,))
-    agent_thread.start()
+    # Redirect print statements to the logger
+    import sys
+    sys.stdout = logger
 
-    # Bind the closing event to ensure the terminal stops when the window is closed
-    root.protocol("WM_DELETE_WINDOW", lambda: on_closing(root))
+    # Start agent initialization in a separate thread
+    agent_thread = threading.Thread(target=start_agents)
+    agent_thread.start()
 
     root.mainloop()
 

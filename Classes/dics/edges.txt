@@ -73,7 +73,7 @@ Rua:  ; Origem: 1377623194 ; Destino: 2066675818 ; Oneway: False ; Highway: seco
 Rua:  ; Origem: 1377623194 ; Destino: 9917611823 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 1377623194 ; Destino: 10661650074 ; Oneway: True ; Highway: tertiary
 Rua: Rua da Fonte Velha ; Origem: 1377624261 ; Destino: 10056894196 ; Oneway: False ; Highway: residential
-Rua: ['Largo Rocha Cabral', 'Rua da Escola'] ; Origem: 1377624261 ; Destino: 10056894209 ; Oneway: False ; Highway: secondary
+Rua: ['Rua da Escola', 'Largo Rocha Cabral'] ; Origem: 1377624261 ; Destino: 10056894209 ; Oneway: False ; Highway: secondary
 Rua: Rua da Escola ; Origem: 1377624261 ; Destino: 5400637181 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 1377748278 ; Destino: 10661668531 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 1377748278 ; Destino: 1377754245 ; Oneway: False ; Highway: secondary
@@ -219,7 +219,7 @@ Rua: Variante à EN 322 (23) ; Origem: 1708860959 ; Destino: 1638439419 ; Oneway:
 Rua:  ; Origem: 1708860959 ; Destino: 1708860950 ; Oneway: True ; Highway: primary_link
 Rua: Rua das Adegas ; Origem: 2034407448 ; Destino: 4381038516 ; Oneway: False ; Highway: residential
 Rua: Rua de Cima (2) ; Origem: 2034409232 ; Destino: 1377781264 ; Oneway: False ; Highway: residential
-Rua: ['Largo das Tílias', 'Rua de São João'] ; Origem: 2034409232 ; Destino: 9520859831 ; Oneway: False ; Highway: residential
+Rua: ['Rua de São João', 'Largo das Tílias'] ; Origem: 2034409232 ; Destino: 9520859831 ; Oneway: False ; Highway: residential
 Rua: ['Largo das Tílias', 'Rua do Brasil'] ; Origem: 2034409232 ; Destino: 2034409407 ; Oneway: False ; Highway: residential
 Rua: ['Largo das Tílias', 'Rua do Brasil'] (2) ; Origem: 2034409407 ; Destino: 2034409232 ; Oneway: False ; Highway: residential
 Rua: Rua Miguel Torga ; Origem: 2048506822 ; Destino: 7089963521 ; Oneway: False ; Highway: tertiary
@@ -888,12 +888,12 @@ Rua: Largo da Praça (3) ; Origem: 3292833991 ; Destino: 3292833649 ; Oneway: Fal
 Rua: ['Rua Cimo de Vila', 'Largo da Praça'] ; Origem: 3292833991 ; Destino: 3292834018 ; Oneway: False ; Highway: secondary
 Rua: Rua Fundo de Vila (2) ; Origem: 3292834017 ; Destino: 3292833991 ; Oneway: False ; Highway: residential
 Rua: Rua do Vale ; Origem: 3292834018 ; Destino: 3292834031 ; Oneway: False ; Highway: residential
-Rua: ['Largo da Praça', 'Rua Cimo de Vila'] ; Origem: 3292834018 ; Destino: 3292833991 ; Oneway: False ; Highway: secondary
+Rua: ['Rua Cimo de Vila', 'Largo da Praça'] (2) ; Origem: 3292834018 ; Destino: 3292833991 ; Oneway: False ; Highway: secondary
 Rua: Rua Cimo de Vila (6) ; Origem: 3292834018 ; Destino: 3292833622 ; Oneway: False ; Highway: secondary
 Rua: Rua do Vale (2) ; Origem: 3292834031 ; Destino: 3292834018 ; Oneway: False ; Highway: residential
 Rua:  ; Origem: 3292834042 ; Destino: 1377764189 ; Oneway: False ; Highway: tertiary
 Rua:  ; Origem: 3292834042 ; Destino: 3292834140 ; Oneway: False ; Highway: secondary
-Rua: ['Rua do Barreiro', 'Rua da Pedreira'] ; Origem: 3292834042 ; Destino: 9521910146 ; Oneway: False ; Highway: secondary
+Rua: ['Rua da Pedreira', 'Rua do Barreiro'] ; Origem: 3292834042 ; Destino: 9521910146 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 3292834129 ; Destino: 2066701268 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 3292834129 ; Destino: 3292834140 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 3292834129 ; Destino: 3292834139 ; Oneway: False ; Highway: residential
@@ -1654,10 +1654,10 @@ Rua:  ; Origem: 9503594962 ; Destino: 9503594963 ; Oneway: False ; Highway: resi
 Rua:  ; Origem: 9503594963 ; Destino: 9503594962 ; Oneway: False ; Highway: residential
 Rua: Rua Barão da Ribeira de Sabrosa (25) ; Origem: 9503594963 ; Destino: 2083546809 ; Oneway: False ; Highway: primary
 Rua: Rua Barão da Ribeira de Sabrosa (26) ; Origem: 9503594963 ; Destino: 3165883650 ; Oneway: False ; Highway: primary
-Rua: ['Largo das Tílias', 'Rua de São João'] (2) ; Origem: 9520859831 ; Destino: 2034409232 ; Oneway: False ; Highway: residential
+Rua: ['Rua de São João', 'Largo das Tílias'] (2) ; Origem: 9520859831 ; Destino: 2034409232 ; Oneway: False ; Highway: residential
 Rua: Rua dos Cubos ; Origem: 9521910138 ; Destino: 9521910146 ; Oneway: False ; Highway: residential
 Rua: Rua dos Cubos (2) ; Origem: 9521910146 ; Destino: 9521910138 ; Oneway: False ; Highway: residential
-Rua: ['Rua do Barreiro', 'Rua da Pedreira'] (2) ; Origem: 9521910146 ; Destino: 3292834042 ; Oneway: False ; Highway: secondary
+Rua: ['Rua da Pedreira', 'Rua do Barreiro'] (2) ; Origem: 9521910146 ; Destino: 3292834042 ; Oneway: False ; Highway: secondary
 Rua: Rua do Barreiro (6) ; Origem: 9521910146 ; Destino: 3292833967 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 9548300427 ; Destino: 1695929534 ; Oneway: False ; Highway: tertiary
 Rua:  ; Origem: 9548300427 ; Destino: 1695929534 ; Oneway: False ; Highway: residential
@@ -1931,7 +1931,7 @@ Rua:  ; Origem: 10056894189 ; Destino: 10056894185 ; Oneway: False ; Highway: re
 Rua: Rua da Fonte Velha (2) ; Origem: 10056894196 ; Destino: 1377624261 ; Oneway: False ; Highway: residential
 Rua: Largo Rocha Cabral (3) ; Origem: 10056894209 ; Destino: 1377622905 ; Oneway: False ; Highway: secondary
 Rua: Rua da Quelha (5) ; Origem: 10056894209 ; Destino: 10056894221 ; Oneway: False ; Highway: residential
-Rua: ['Largo Rocha Cabral', 'Rua da Escola'] (2) ; Origem: 10056894209 ; Destino: 1377624261 ; Oneway: False ; Highway: secondary
+Rua: ['Largo Rocha Cabral', 'Rua da Escola'] ; Origem: 10056894209 ; Destino: 1377624261 ; Oneway: False ; Highway: secondary
 Rua:  ; Origem: 10056894221 ; Destino: 10056859815 ; Oneway: False ; Highway: secondary
 Rua: Rua da Quelha (6) ; Origem: 10056894221 ; Destino: 10056894209 ; Oneway: False ; Highway: residential
 Rua: Largo Rocha Cabral (4) ; Origem: 10056894221 ; Destino: 1377622905 ; Oneway: False ; Highway: secondary
@@ -2434,8 +2434,8 @@ Rua: Rua da Fonte (3) ; Origem: 11579068550 ; Destino: 11579068547 ; Oneway: Fal
 Rua:  ; Origem: 11579068550 ; Destino: 11579068510 ; Oneway: False ; Highway: residential
 Rua: Rua Central (10) ; Origem: 11579068551 ; Destino: 11579068530 ; Oneway: False ; Highway: residential
 Rua: Rua da Fonte (4) ; Origem: 11579068551 ; Destino: 11579068550 ; Oneway: False ; Highway: residential
-Rua: ['Rua Fundo de Vila', 'Rua Central'] ; Origem: 11579068551 ; Destino: 11579068562 ; Oneway: False ; Highway: residential
-Rua: ['Rua Fundo de Vila', 'Rua Central'] (2) ; Origem: 11579068562 ; Destino: 11579068551 ; Oneway: False ; Highway: residential
+Rua: ['Rua Central', 'Rua Fundo de Vila'] ; Origem: 11579068551 ; Destino: 11579068562 ; Oneway: False ; Highway: residential
+Rua: ['Rua Central', 'Rua Fundo de Vila'] (2) ; Origem: 11579068562 ; Destino: 11579068551 ; Oneway: False ; Highway: residential
 Rua:  ; Origem: 11579068562 ; Destino: 11579068569 ; Oneway: False ; Highway: residential
 Rua:  ; Origem: 11579068562 ; Destino: 11579068571 ; Oneway: False ; Highway: residential
 Rua:  ; Origem: 11579068569 ; Destino: 11579068562 ; Oneway: False ; Highway: residential
