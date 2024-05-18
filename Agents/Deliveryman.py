@@ -11,7 +11,7 @@ class DeliverymanAgent(agent.Agent):
     available = True
 
     async def setup(self):
-        # print("Agent {}".format(str(self.jid)) + " starting...")
+        print("Agent {}".format(str(self.jid)) + " starting...")
 
         self.deliveries = []
 

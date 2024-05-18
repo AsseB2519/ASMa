@@ -10,7 +10,7 @@ from Classes.Position import Position
 class ClientAgent(agent.Agent):
 
     async def setup(self):
-        # print("Agent {}".format(str(self.jid)) + " starting...")
+        print("Agent {}".format(str(self.jid)) + " starting...")
         
         self.position = Position(random.randint(1, 100), random.randint(1, 100), config.random_node_selection(config.FILE_PATH))
 

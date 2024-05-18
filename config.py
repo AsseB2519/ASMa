@@ -24,6 +24,9 @@ DELIVERYMAN = None
 GRAPH = None
 GRAPH_BIKE = None
 
+CLIENT_LIST = []
+DELIVERYMAN_LIST = []
+
 FILE_PATH = 'Classes/dics/nodes.txt'
 
 def get_integer_input(prompt):

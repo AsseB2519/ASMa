@@ -14,11 +14,6 @@ from Agents.StockManager import StockManagerAgent
 from Agents.DeliverymanManager import DeliverymanManagerAgent
 from Agents.Supplier import SupplierAgent
 from PIL import Image, ImageTk
-import sys
-from colorama import Fore, Style, init
-
-# Initialize colorama
-init(autoreset=True)
 
 XMPP_SERVER = 'laptop-ci4qet97'
 PASSWORD = 'NOPASSWORD'

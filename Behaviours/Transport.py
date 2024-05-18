@@ -331,7 +331,7 @@ class Transport_Behav(CyclicBehaviour):
                     self.agent.available = True
                     self.agent.deliveries.clear()
 
-                else: print("Waiting for more returns! Atual: {total_products} vs Min Capacity: 5")
+                else: print("Waiting for more returns! Atual: {} vs Min Capacity: 5".format(total_products))
 
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")
