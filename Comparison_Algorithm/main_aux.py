@@ -176,8 +176,6 @@ def seleciona_origem_destino(graph):
     end = graph.get_node_by_id(intersectionDetino)
     return start, end
 
-    
-
 def performance_algoritmos(pathDFS, pathBFS, pathBidirecional, pathCustoUniforme, pathProcuraIterativa, pathAstar, pathGreedy, profiles):
     table = PrettyTable()
     dicionario = dict()
@@ -193,10 +191,10 @@ def performance_algoritmos(pathDFS, pathBFS, pathBidirecional, pathCustoUniforme
 
     for profile in profiles:
         stats = pstats.Stats(profile)
-        tempo = stats.total_tt
-        num_cals = stats.total_calls
+        tempo = round(stats.total_tt, 2)
+        num_calls = stats.total_calls
         dicionario['Tempo de Execução'].append(tempo)
-        dicionario['Número de Chamadas de Funções'].append(num_cals)
+        dicionario['Número de Chamadas de Funções'].append(num_calls)
     
     dicionario['Tamanho do Path'].append(len(pathDFS[0]))
     dicionario['Tamanho do Path'].append(len(pathBFS[0]))
@@ -206,22 +204,21 @@ def performance_algoritmos(pathDFS, pathBFS, pathBidirecional, pathCustoUniforme
     dicionario['Tamanho do Path'].append(len(pathAstar[0]))
     dicionario['Tamanho do Path'].append(len(pathGreedy[0]))
 
-    dicionario['Distância'].append(pathDFS[1])
-    dicionario['Distância'].append(pathBFS[1])
-    dicionario['Distância'].append(pathBidirecional[1])
-    dicionario['Distância'].append(pathCustoUniforme[1])
-    dicionario['Distância'].append(pathProcuraIterativa[1])
-    dicionario['Distância'].append(pathAstar[1])
-    dicionario['Distância'].append(pathGreedy[1])
+    dicionario['Distância'].append(round(pathDFS[1], 2))
+    dicionario['Distância'].append(round(pathBFS[1], 2))
+    dicionario['Distância'].append(round(pathBidirecional[1], 2))
+    dicionario['Distância'].append(round(pathCustoUniforme[1], 2))
+    dicionario['Distância'].append(round(pathProcuraIterativa[1], 2))
+    dicionario['Distância'].append(round(pathAstar[1], 2))
+    dicionario['Distância'].append(round(pathGreedy[1], 2))
 
-    dicionario['Tempo'].append(pathDFS[1]/13.8889)
-    dicionario['Tempo'].append(pathBFS[1]/13.8889)
-    dicionario['Tempo'].append(pathBidirecional[1]/13.8889)
-    dicionario['Tempo'].append(pathCustoUniforme[1]/13.8889)
-    dicionario['Tempo'].append(pathProcuraIterativa[1]/13.8889)
-    dicionario['Tempo'].append(pathAstar[1]/13.8889)
-    dicionario['Tempo'].append(pathGreedy[1]/13.8889)
-
+    dicionario['Tempo'].append(round(pathDFS[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathBFS[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathBidirecional[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathCustoUniforme[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathProcuraIterativa[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathAstar[1]/13.8889, 2))
+    dicionario['Tempo'].append(round(pathGreedy[1]/13.8889, 2))
 
     dicionario['Número de Nós Explorados'].append(pathDFS[2])
     dicionario['Número de Nós Explorados'].append(pathBFS[2])
@@ -231,7 +228,7 @@ def performance_algoritmos(pathDFS, pathBFS, pathBidirecional, pathCustoUniforme
     dicionario['Número de Nós Explorados'].append(pathAstar[2])
     dicionario['Número de Nós Explorados'].append(pathGreedy[2])
     
-    table.field_names = ['Algoritmo', 'Tempo de Execução', 'Número de Chamadas de Funções', 'Tamanho do Path', 'Distância (m)', 'Tempo (seg)', 'Número de Nós Explorados']
+    table.field_names = ['Algoritmo', 'Tempo de Execução (s)', 'Número de Chamadas de Funções', 'Tamanho do Path', 'Distância (m)', 'Tempo (s)', 'Número de Nós Explorados']
     for i in range(len(dicionario['Algoritmo'])):
         row = [
             dicionario['Algoritmo'][i],
@@ -248,15 +245,17 @@ def performance_algoritmos(pathDFS, pathBFS, pathBidirecional, pathCustoUniforme
 
     yes = r'(?i)\b(?:yes|y)\b'
     no = r'(?i)\b(?:no|n)\b'
-    i=0
+    i = 0
     r = input("Quer ver informação com mais detalhe? (yes/no): ")
     if re.match(yes, r):
         for profile in profiles:
             print(f'---{algoritmos[i]}---')
             profile.print_stats(sort='cumulative')
             i += 1
-    elif re.match(no, r): return
+    elif re.match(no, r): 
+        return
 
 
 if __name__ == "__main__":
     main()
+

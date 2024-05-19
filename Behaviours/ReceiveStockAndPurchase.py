@@ -8,7 +8,7 @@ from Classes.Purchase import Purchase
 
 class ReceiveStockAndPurchase_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=20)  
+        msg = await self.receive(timeout=100)  
         if msg:
             performative = msg.get_metadata("performative")
             if performative == "inform":

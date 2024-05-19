@@ -11,7 +11,7 @@ class ProcessingDelivery_Behav(CyclicBehaviour):
     delivery_id_counter = 0
 
     async def run(self):
-        msg = await self.receive(timeout=20) 
+        msg = await self.receive(timeout=100) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")

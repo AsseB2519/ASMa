@@ -29,26 +29,6 @@ DELIVERYMAN_LIST = []
 
 FILE_PATH = 'Classes/dics/nodes.txt'
 
-def get_integer_input(prompt):
-    while True:
-        try:
-            # Try to convert the input to an integer
-            value = int(input(prompt))
-            return value
-        except ValueError:
-            # If conversion fails, prompt the user again
-            print("Invalid input. Please enter an integer.")
-
-def get_string_input(prompt):
-    while True:
-        try:
-            # Get input from the user
-            value = input(prompt)
-            return value
-        except Exception as e:
-            # Handle exceptions
-            print("Error:", e)
-
 def random_node_selection(file_path):
     # Open the file and read all lines
     with open(file_path, 'r') as file:

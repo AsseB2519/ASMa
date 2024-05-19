@@ -1,6 +1,8 @@
 import random
+import time
 import numpy as np
 import jsonpickle
+import config
 
 from spade.behaviour import PeriodicBehaviour
 from spade.message import Message
@@ -32,6 +34,11 @@ class Return_Behav (PeriodicBehaviour):
 
     async def run(self):
         if self.agent.productsBought:
+            numero = config.CLIENTS 
+            numero = numero + 1 
+
+            time.sleep(numero * 2)
+
             count_weights = self.generate_exponential_decay_weights(len(self.agent.productsBought))
             selected_products = self.select_products_to_return(self.agent.productsBought, count_weights)
             return_list = self.determine_return_quantities(selected_products)

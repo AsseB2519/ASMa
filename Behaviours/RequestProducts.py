@@ -6,12 +6,12 @@ from spade.message import Message
 class RequestProducts_Behav(PeriodicBehaviour):
     async def run(self):
 
-        time.sleep(config.CLIENTS)
+        # time.sleep(config.CLIENTS)
 
         numero = config.CLIENTS 
-        config.CLIENTS = numero + 1 
+        numero = numero + 1 
 
-        time.sleep(numero)
+        time.sleep(numero * 2)
 
         msg = Message(to=self.agent.get('stockmanager_contact'))   
         msg.body = "Request Products Available"               

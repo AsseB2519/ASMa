@@ -189,7 +189,7 @@ def _add_client():
     res_client = client_agent.start(auto_register=True)
     res_client.result()
     config.CLIENT_LIST.append(client_agent)
-    print(f"Added new client: {client_jid}\n")
+    # print(f"Added new client: {client_jid}\n")
 
 def add_deliveryman():
     threading.Thread(target=_add_deliveryman).start()
@@ -203,7 +203,7 @@ def _add_deliveryman():
     res_deliveryman = deliveryman_agent.start(auto_register=True)
     res_deliveryman.result()
     config.DELIVERYMAN_LIST.append(deliveryman_agent)
-    print(f"Added new deliveryman: {deliveryman_jid}\n")
+    # print(f"Added new deliveryman: {deliveryman_jid}\n")
 
 def main():
 

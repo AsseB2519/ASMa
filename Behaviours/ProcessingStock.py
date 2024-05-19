@@ -10,7 +10,7 @@ from Classes.Return import Return
 
 class ProcessingStock_Behav(CyclicBehaviour):
     async def run(self):
-        msg = await self.receive(timeout=20) 
+        msg = await self.receive(timeout=100) 
         if msg:
             # Message Threatment based on different Message performatives
             performative = msg.get_metadata("performative")
@@ -133,6 +133,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 # print("Agent {}:".format(str(self.agent.jid)) + " StockManager Agent requesting PurchaseDeliveryman after Negociation to DeliverymanManager Agent {}".format(str(self.agent.get("deliveryman_contact"))))
                 await self.send(msg)
             
+            elif performative == "reject_proposal":
+                pass
+
             elif performative == "confirmation_refund":
                 ret = jsonpickle.decode(msg.body)
 
@@ -190,19 +193,23 @@ class ProcessingStock_Behav(CyclicBehaviour):
                 print("StockManager {}".format(str(self.agent.jid)) + " updated the stock of product(s) supplied by Supplier " + str(msg.sender))
             
             elif performative == "supplier_propose":
+                supplier = str(msg.sender)
                 supply = jsonpickle.decode(msg.body)
-                if random.random() < 0.8:
+
+                if random.random() < 0.80:
                     msg = Message(to=self.agent.get('supplier_contact'))   
                     msg.body = jsonpickle.encode(supply)          
                     msg.set_metadata("performative", "accept_proposal")
 
-                    print("StockManager {}".format(str(self.agent.jid)) + " accepted the proposal by Supplier " + str(msg.sender))
+                    print("StockManager {}".format(str(self.agent.jid)) + " accepted the proposal by Supplier " + str(supplier))
+                    await self.send(msg)
                 else: 
                     msg = Message(to=self.agent.get('supplier_contact'))   
                     msg.body = jsonpickle.encode(supply)          
                     msg.set_metadata("performative", "reject_proposal")
 
-                    print("StockManager {}".format(str(self.agent.jid)) + " rejected the proposal by Supplier " + str(msg.sender))
+                    print("StockManager {}".format(str(self.agent.jid)) + " rejected the proposal by Supplier " + str(supplier))
+                    await self.send(msg)
             
             else:
                 print(f"Agent {self.agent.jid}: Message not understood!")     
