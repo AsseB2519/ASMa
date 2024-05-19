@@ -21,8 +21,11 @@ class DeliverymanAgent(agent.Agent):
         self.actions = initialize_deliverymen(config.DELIVERYMAN)
         self.type = self.actions[0]  # Assign the first action type to this agent
 
-        self.add_behaviour(RegisterDelivery_Behav())
-        self.add_behaviour(Transport_Behav())
+        a = RegisterDelivery_Behav()
+        self.add_behaviour(a)
+
+        b = Transport_Behav()
+        self.add_behaviour(b)
 
 def initialize_deliverymen(total_deliverymen):
     if total_deliverymen < 2:

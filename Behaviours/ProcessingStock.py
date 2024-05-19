@@ -179,7 +179,9 @@ class ProcessingStock_Behav(CyclicBehaviour):
                                 # Decide whether to add the product based on the category probability
                                 if random.random() < probability:
                                     q = product.get_quantity()
-                                    product.set_quantity(q + quantity)                            
+                                    product.set_quantity(q + quantity) 
+
+                print("StockManager {}".format(str(self.agent.jid)) + " updated the stock of product(s) returned")                           
 
             elif performative == "supply":
                 supply = jsonpickle.decode(msg.body)

@@ -10,7 +10,7 @@ from spade.message import Message
 from Classes.Return import Return
 
 class Return_Behav (PeriodicBehaviour): 
-    def generate_exponential_decay_weights(self, n, decay_factor=0.4):
+    def generate_exponential_decay_weights(self, n, decay_factor=0.25):
         """Generate weights with exponential decay."""
         weights = np.exp(-decay_factor * np.arange(n))
         return weights / np.sum(weights)
@@ -20,7 +20,7 @@ class Return_Behav (PeriodicBehaviour):
         number_of_products_to_return = random.choices(range(1, len(products_bought) + 1), weights=count_weights, k=1)[0]
         return random.sample(list(products_bought.items()), k=number_of_products_to_return)
 
-    def determine_return_quantities(self, products_to_return, quantity_decay_factor=0.4):
+    def determine_return_quantities(self, products_to_return, quantity_decay_factor=0.25):
         """Determine quantities for each selected product to return using exponential decay weights."""
         return_list = []
         for product_id, bought_quantity in products_to_return:
