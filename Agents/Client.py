@@ -17,7 +17,7 @@ class ClientAgent(agent.Agent):
         self.productsBought = {}
         self.productsBought_notDelivered = []
 
-        a = RequestProducts_Behav(period=80)
+        a = RequestProducts_Behav(period=90)
         self.add_behaviour(a)
         b = ReceiveStockAndPurchase_Behav()
         self.add_behaviour(b)
